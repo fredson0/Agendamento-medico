@@ -1,0 +1,1595 @@
+  [1m[35m (2.7ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY) /*application='HOcalendar'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.2ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('environment', 'development', '2025-10-02 11:15:38.941395', '2025-10-02 11:15:38.941399') RETURNING "key" /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+Migrating to CreateUsuarios (20251002110923)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (3.5ms)[0m  [1m[35mCREATE TABLE "usuarios" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "username" varchar(50) NOT NULL, "hash_senha" varchar(255) NOT NULL, "papel" varchar NOT NULL, "mfa_enabled" boolean DEFAULT 0, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='HOcalendar'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_usuarios_on_username" ON "usuarios" ("username") /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002110923') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreatePacientes (20251002110931)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE TABLE "pacientes" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "nome" varchar(150) NOT NULL, "cpf" varchar(11) NOT NULL, "data_nascimento" date, "telefone" varchar(20), "email" varchar(100), "sexo" varchar(1), "endereco" varchar(255), "usuario_id" integer, "ativo" boolean DEFAULT 1, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_78660ad377"
+FOREIGN KEY ("usuario_id")
+  REFERENCES "usuarios" ("id")
+) /*application='HOcalendar'*/[0m
+  [1m[35m (4.3ms)[0m  [1m[35mCREATE INDEX "index_pacientes_on_usuario_id" ON "pacientes" ("usuario_id") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_pacientes_on_cpf" ON "pacientes" ("cpf") /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (1.5ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002110931') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreateMedicos (20251002110937)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (7.4ms)[0m  [1m[35mCREATE TABLE "medicos" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "nome" varchar(150) NOT NULL, "crm" varchar(20) NOT NULL, "uf_crm" varchar(2) NOT NULL, "telefone" varchar(20), "email" varchar(100), "usuario_id" integer, "ativo" boolean DEFAULT 1, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_dc8b4cb1da"
+FOREIGN KEY ("usuario_id")
+  REFERENCES "usuarios" ("id")
+) /*application='HOcalendar'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "index_medicos_on_usuario_id" ON "medicos" ("usuario_id") /*application='HOcalendar'*/[0m
+  [1m[35m (0.8ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_medicos_on_crm_and_uf_crm" ON "medicos" ("crm", "uf_crm") /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002110937') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreateEspecialidades (20251002110940)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (1.7ms)[0m  [1m[35mCREATE TABLE "especialidades" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "nome" varchar, "descricao" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002110940') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (2.0ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreateMedicoEspecialidades (20251002110944)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (2.3ms)[0m  [1m[35mCREATE TABLE "medico_especialidades" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "medico_id" integer NOT NULL, "especialidade_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_7f8488cb42"
+FOREIGN KEY ("medico_id")
+  REFERENCES "medicos" ("id")
+, CONSTRAINT "fk_rails_13db3575f0"
+FOREIGN KEY ("especialidade_id")
+  REFERENCES "especialidades" ("id")
+) /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_medico_especialidades_on_medico_id" ON "medico_especialidades" ("medico_id") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_medico_especialidades_on_especialidade_id" ON "medico_especialidades" ("especialidade_id") /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002110944') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreateUnidades (20251002110955)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE TABLE "unidades" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "nome" varchar(150) NOT NULL, "cnpj" varchar(14), "endereco" varchar(255), "telefone" varchar(20), "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_unidades_on_cnpj" ON "unidades" ("cnpj") /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002110955') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreateSalas (20251002111002)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE TABLE "salas" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "unidade_id" integer NOT NULL, "nome" varchar, "recursos" varchar, "ativa" boolean, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_5e2366f3f5"
+FOREIGN KEY ("unidade_id")
+  REFERENCES "unidades" ("id")
+) /*application='HOcalendar'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_salas_on_unidade_id" ON "salas" ("unidade_id") /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002111002') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreateAgendas (20251002111005)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE TABLE "agendas" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "medico_id" integer NOT NULL, "unidade_id" integer NOT NULL, "duracao_slot_min" integer, "data_inicio" date, "data_fim" date, "dias_semana" varchar, "hora_inicio" time, "hora_fim" time, "politica_intervalo" integer, "permite_teleconsulta" boolean, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_dbdc4d07e2"
+FOREIGN KEY ("medico_id")
+  REFERENCES "medicos" ("id")
+, CONSTRAINT "fk_rails_68403a72c4"
+FOREIGN KEY ("unidade_id")
+  REFERENCES "unidades" ("id")
+) /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_agendas_on_medico_id" ON "agendas" ("medico_id") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_agendas_on_unidade_id" ON "agendas" ("unidade_id") /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002111005') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreateBloqueioAgendas (20251002111008)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE TABLE "bloqueio_agendas" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "agenda_id" integer NOT NULL, "inicio" datetime(6), "fim" datetime(6), "motivo" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_a0f6eaa699"
+FOREIGN KEY ("agenda_id")
+  REFERENCES "agendas" ("id")
+) /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_bloqueio_agendas_on_agenda_id" ON "bloqueio_agendas" ("agenda_id") /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002111008') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreateHorarios (20251002111011)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE TABLE "horarios" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "agenda_id" integer NOT NULL, "inicio" datetime(6), "fim" datetime(6), "status" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_2cb9b59571"
+FOREIGN KEY ("agenda_id")
+  REFERENCES "agendas" ("id")
+) /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_horarios_on_agenda_id" ON "horarios" ("agenda_id") /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002111011') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreateConsulta (20251002111032)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE TABLE "consultas" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "paciente_id" integer NOT NULL, "medico_id" integer NOT NULL, "unidade_id" integer NOT NULL, "sala_id" integer, "especialidade_id" integer, "inicio" datetime(6) NOT NULL, "fim" datetime(6) NOT NULL, "tipo" varchar DEFAULT 'presencial', "status" varchar DEFAULT 'marcada', "origem" varchar DEFAULT 'app', "observacoes" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_f9df072331"
+FOREIGN KEY ("paciente_id")
+  REFERENCES "pacientes" ("id")
+, CONSTRAINT "fk_rails_9056928eab"
+FOREIGN KEY ("medico_id")
+  REFERENCES "medicos" ("id")
+, CONSTRAINT "fk_rails_97b89cc44a"
+FOREIGN KEY ("unidade_id")
+  REFERENCES "unidades" ("id")
+, CONSTRAINT "fk_rails_b43cfd59cf"
+FOREIGN KEY ("sala_id")
+  REFERENCES "salas" ("id")
+, CONSTRAINT "fk_rails_b0df5bd8b7"
+FOREIGN KEY ("especialidade_id")
+  REFERENCES "especialidades" ("id")
+) /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_consultas_on_paciente_id" ON "consultas" ("paciente_id") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_consultas_on_medico_id" ON "consultas" ("medico_id") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_consultas_on_unidade_id" ON "consultas" ("unidade_id") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_consultas_on_sala_id" ON "consultas" ("sala_id") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_consultas_on_especialidade_id" ON "consultas" ("especialidade_id") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_consultas_on_inicio" ON "consultas" ("inicio") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_consultas_on_status" ON "consultas" ("status") /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.5ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002111032') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreateLembretes (20251002111037)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (1.4ms)[0m  [1m[35mCREATE TABLE "lembretes" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "consulta_id" integer NOT NULL, "canal" varchar, "enviado_em" datetime(6), "status" varchar DEFAULT 'pendente', "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_53415898b7"
+FOREIGN KEY ("consulta_id")
+  REFERENCES "consultas" ("id")
+) /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_lembretes_on_consulta_id" ON "lembretes" ("consulta_id") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_lembretes_on_status" ON "lembretes" ("status") /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002111037') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreateConvenios (20251002111040)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE TABLE "convenios" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "nome" varchar(100) NOT NULL, "ans" varchar(20), "ativo" boolean DEFAULT 1, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002111040') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreatePlanos (20251002111043)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE TABLE "planos" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "convenio_id" integer NOT NULL, "nome" varchar, "regras" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_0e0928207b"
+FOREIGN KEY ("convenio_id")
+  REFERENCES "convenios" ("id")
+) /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_planos_on_convenio_id" ON "planos" ("convenio_id") /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002111043') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreatePacientePlanos (20251002111045)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (1.4ms)[0m  [1m[35mCREATE TABLE "paciente_planos" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "paciente_id" integer NOT NULL, "plano_id" integer NOT NULL, "numero_carteira" varchar, "validade" date, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_aaaac9fc0f"
+FOREIGN KEY ("paciente_id")
+  REFERENCES "pacientes" ("id")
+, CONSTRAINT "fk_rails_0316b6428b"
+FOREIGN KEY ("plano_id")
+  REFERENCES "planos" ("id")
+) /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_paciente_planos_on_paciente_id" ON "paciente_planos" ("paciente_id") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_paciente_planos_on_plano_id" ON "paciente_planos" ("plano_id") /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002111045') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreatePagamentos (20251002111054)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE TABLE "pagamentos" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "consulta_id" integer NOT NULL, "valor" decimal(10,2) NOT NULL, "forma" varchar, "status" varchar DEFAULT 'pendente', "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_6ca40cff12"
+FOREIGN KEY ("consulta_id")
+  REFERENCES "consultas" ("id")
+) /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_pagamentos_on_consulta_id" ON "pagamentos" ("consulta_id") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_pagamentos_on_status" ON "pagamentos" ("status") /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002111054') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Migrating to CreateAuditoria (20251002111057)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE TABLE "auditorias" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "entidade" varchar(50), "id_registro" integer, "acao" varchar(50), "realizado_por" integer, "realizado_em" datetime(6), "diffs" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_auditorias_on_realizado_por" ON "auditorias" ("realizado_por") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_auditorias_on_entidade" ON "auditorias" ("entidade") /*application='HOcalendar'*/[0m
+  [1m[35mSQL (0.0ms)[0m  [1m[35mPRAGMA foreign_keys /*application='HOcalendar'*/[0m
+  [1m[35mSQL (0.9ms)[0m  [1m[35mPRAGMA defer_foreign_keys /*application='HOcalendar'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys = ON /*application='HOcalendar'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys = OFF /*application='HOcalendar'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE TEMPORARY TABLE "aauditorias" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "entidade" varchar(50), "id_registro" integer, "acao" varchar(50), "realizado_por" integer, "realizado_em" datetime(6), "diffs" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "tindex_aauditorias_on_entidade" ON "aauditorias" ("entidade") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "tindex_aauditorias_on_realizado_por" ON "aauditorias" ("realizado_por") /*application='HOcalendar'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[32mINSERT INTO "aauditorias" ("id","entidade","id_registro","acao","realizado_por","realizado_em","diffs","created_at","updated_at")
+                     SELECT "id","entidade","id_registro","acao","realizado_por","realizado_em","diffs","created_at","updated_at" FROM "auditorias" /*application='HOcalendar'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE "auditorias" /*application='HOcalendar'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE TABLE "auditorias" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "entidade" varchar(50), "id_registro" integer, "acao" varchar(50), "realizado_por" integer, "realizado_em" datetime(6), "diffs" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_58d23a4282"
+FOREIGN KEY ("realizado_por")
+  REFERENCES "usuarios" ("id")
+) /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_auditorias_on_realizado_por" ON "auditorias" ("realizado_por") /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_auditorias_on_entidade" ON "auditorias" ("entidade") /*application='HOcalendar'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[32mINSERT INTO "auditorias" ("id","entidade","id_registro","acao","realizado_por","realizado_em","diffs","created_at","updated_at")
+                     SELECT "id","entidade","id_registro","acao","realizado_por","realizado_em","diffs","created_at","updated_at" FROM "aauditorias" /*application='HOcalendar'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE "aauditorias" /*application='HOcalendar'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys = 0 /*application='HOcalendar'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys = 1 /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002111057') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+  [1m[36mAuditoria Load (0.1ms)[0m  [1m[34mSELECT "auditorias".* FROM "auditorias" /*application='HOcalendar'*/[0m
+  [1m[36mPagamento Load (0.1ms)[0m  [1m[34mSELECT "pagamentos".* FROM "pagamentos" /*application='HOcalendar'*/[0m
+  [1m[36mLembrete Load (0.6ms)[0m  [1m[34mSELECT "lembretes".* FROM "lembretes" /*application='HOcalendar'*/[0m
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" /*application='HOcalendar'*/[0m
+  [1m[36mHorario Load (0.2ms)[0m  [1m[34mSELECT "horarios".* FROM "horarios" /*application='HOcalendar'*/[0m
+  [1m[36mBloqueioAgenda Load (0.5ms)[0m  [1m[34mSELECT "bloqueio_agendas".* FROM "bloqueio_agendas" /*application='HOcalendar'*/[0m
+  [1m[36mAgenda Load (6.0ms)[0m  [1m[34mSELECT "agendas".* FROM "agendas" /*application='HOcalendar'*/[0m
+  [1m[36mPacientePlano Load (0.1ms)[0m  [1m[34mSELECT "paciente_planos".* FROM "paciente_planos" /*application='HOcalendar'*/[0m
+  [1m[36mPlano Load (0.2ms)[0m  [1m[34mSELECT "planos".* FROM "planos" /*application='HOcalendar'*/[0m
+  [1m[36mConvenio Load (0.3ms)[0m  [1m[34mSELECT "convenios".* FROM "convenios" /*application='HOcalendar'*/[0m
+  [1m[36mSala Load (0.1ms)[0m  [1m[34mSELECT "salas".* FROM "salas" /*application='HOcalendar'*/[0m
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" /*application='HOcalendar'*/[0m
+  [1m[36mMedicoEspecialidade Load (0.1ms)[0m  [1m[34mSELECT "medico_especialidades".* FROM "medico_especialidades" /*application='HOcalendar'*/[0m
+  [1m[36mEspecialidade Load (0.1ms)[0m  [1m[34mSELECT "especialidades".* FROM "especialidades" /*application='HOcalendar'*/[0m
+  [1m[36mMedico Load (0.2ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" /*application='HOcalendar'*/[0m
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Exists? (6.9ms)[0m  [1m[34mSELECT 1 AS one FROM "usuarios" WHERE "usuarios"."username" = 'admin' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Create (0.6ms)[0m  [1m[32mINSERT INTO "usuarios" ("username", "hash_senha", "papel", "mfa_enabled", "created_at", "updated_at") VALUES ('admin', '$2a$12$X3jdrJ.bSbfHIGww8pohq.GQ1jDkIbfUPOhZyQuZsTUBhzSVUCN0W', 'admin', 1, '2025-10-02 11:19:04.686177', '2025-10-02 11:19:04.686177') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (6.7ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Exists? (3.5ms)[0m  [1m[34mSELECT 1 AS one FROM "usuarios" WHERE "usuarios"."username" = 'atendente' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Create (0.6ms)[0m  [1m[32mINSERT INTO "usuarios" ("username", "hash_senha", "papel", "mfa_enabled", "created_at", "updated_at") VALUES ('atendente', '$2a$12$Xz65b84qqMtHZgCBzfK3Juvb25TLFYQKjTxirr8Z6JW9V0FJW3faS', 'atendente', 0, '2025-10-02 11:19:05.048590', '2025-10-02 11:19:05.048590') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mEspecialidade Create (2.0ms)[0m  [1m[32mINSERT INTO "especialidades" ("nome", "descricao", "created_at", "updated_at") VALUES ('Cardiologia', 'Especialidade médica que cuida do coração', '2025-10-02 11:19:05.075785', '2025-10-02 11:19:05.075785') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mEspecialidade Create (6.1ms)[0m  [1m[32mINSERT INTO "especialidades" ("nome", "descricao", "created_at", "updated_at") VALUES ('Ortopedia', 'Especialidade médica que cuida dos ossos e articulações', '2025-10-02 11:19:05.098774', '2025-10-02 11:19:05.098774') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mEspecialidade Create (1.4ms)[0m  [1m[32mINSERT INTO "especialidades" ("nome", "descricao", "created_at", "updated_at") VALUES ('Pediatria', 'Especialidade médica que cuida de crianças', '2025-10-02 11:19:05.113244', '2025-10-02 11:19:05.113244') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mEspecialidade Create (1.5ms)[0m  [1m[32mINSERT INTO "especialidades" ("nome", "descricao", "created_at", "updated_at") VALUES ('Clínica Geral', 'Atendimento geral', '2025-10-02 11:19:05.127674', '2025-10-02 11:19:05.127674') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Exists? (1.4ms)[0m  [1m[34mSELECT 1 AS one FROM "usuarios" WHERE "usuarios"."username" = 'dr.silva' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Create (0.1ms)[0m  [1m[32mINSERT INTO "usuarios" ("username", "hash_senha", "papel", "mfa_enabled", "created_at", "updated_at") VALUES ('dr.silva', '$2a$12$zfwwjP8olemyiVwqCZJwyOaaaghYy45jq0kgeTv9ZB2U0j0q9AjXK', 'medico', 0, '2025-10-02 11:19:05.456214', '2025-10-02 11:19:05.456214') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mMedico Create (1.4ms)[0m  [1m[32mINSERT INTO "medicos" ("nome", "crm", "uf_crm", "telefone", "email", "usuario_id", "ativo", "created_at", "updated_at") VALUES ('Dr. João Silva', '123456', 'SP', '11987654321', 'joao.silva@hospital.com', 3, 1, '2025-10-02 11:19:05.504935', '2025-10-02 11:19:05.504935') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mMedicoEspecialidade Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "medico_especialidades" WHERE "medico_especialidades"."medico_id" = 1 AND "medico_especialidades"."especialidade_id" = 1 LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mMedicoEspecialidade Create (0.2ms)[0m  [1m[32mINSERT INTO "medico_especialidades" ("medico_id", "especialidade_id", "created_at", "updated_at") VALUES (1, 1, '2025-10-02 11:19:05.585183', '2025-10-02 11:19:05.585183') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mMedicoEspecialidade Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "medico_especialidades" WHERE "medico_especialidades"."medico_id" = 1 AND "medico_especialidades"."especialidade_id" = 4 LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mMedicoEspecialidade Create (0.1ms)[0m  [1m[32mINSERT INTO "medico_especialidades" ("medico_id", "especialidade_id", "created_at", "updated_at") VALUES (1, 4, '2025-10-02 11:19:05.604762', '2025-10-02 11:19:05.604762') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Exists? (1.7ms)[0m  [1m[34mSELECT 1 AS one FROM "usuarios" WHERE "usuarios"."username" = 'dra.santos' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Create (0.1ms)[0m  [1m[32mINSERT INTO "usuarios" ("username", "hash_senha", "papel", "mfa_enabled", "created_at", "updated_at") VALUES ('dra.santos', '$2a$12$Kqweqc6Iu3iN8cV2L9aTFe8LQviq//QjH7wALnGUBFeJACzaZvluS', 'medico', 0, '2025-10-02 11:19:05.935736', '2025-10-02 11:19:05.935736') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mMedico Create (1.9ms)[0m  [1m[32mINSERT INTO "medicos" ("nome", "crm", "uf_crm", "telefone", "email", "usuario_id", "ativo", "created_at", "updated_at") VALUES ('Dra. Maria Santos', '789012', 'SP', '11987654322', 'maria.santos@hospital.com', 4, 1, '2025-10-02 11:19:05.941449', '2025-10-02 11:19:05.941449') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mMedicoEspecialidade Exists? (1.9ms)[0m  [1m[34mSELECT 1 AS one FROM "medico_especialidades" WHERE "medico_especialidades"."medico_id" = 2 AND "medico_especialidades"."especialidade_id" = 3 LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mMedicoEspecialidade Create (0.2ms)[0m  [1m[32mINSERT INTO "medico_especialidades" ("medico_id", "especialidade_id", "created_at", "updated_at") VALUES (2, 3, '2025-10-02 11:19:05.958993', '2025-10-02 11:19:05.958993') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mMedicoEspecialidade Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "medico_especialidades" WHERE "medico_especialidades"."medico_id" = 2 AND "medico_especialidades"."especialidade_id" = 4 LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mMedicoEspecialidade Create (0.1ms)[0m  [1m[32mINSERT INTO "medico_especialidades" ("medico_id", "especialidade_id", "created_at", "updated_at") VALUES (2, 4, '2025-10-02 11:19:05.969115', '2025-10-02 11:19:05.969115') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Exists? (1.5ms)[0m  [1m[34mSELECT 1 AS one FROM "usuarios" WHERE "usuarios"."username" = 'dr.oliveira' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Create (0.2ms)[0m  [1m[32mINSERT INTO "usuarios" ("username", "hash_senha", "papel", "mfa_enabled", "created_at", "updated_at") VALUES ('dr.oliveira', '$2a$12$93K9UTpe0hrAdj4PlHx46exZ4Rf6pW6x2jrIq/fh9SfpMkPIGeN22', 'medico', 0, '2025-10-02 11:19:06.287286', '2025-10-02 11:19:06.287286') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mMedico Create (2.0ms)[0m  [1m[32mINSERT INTO "medicos" ("nome", "crm", "uf_crm", "telefone", "email", "usuario_id", "ativo", "created_at", "updated_at") VALUES ('Dr. Carlos Oliveira', '345678', 'RJ', '21987654323', 'carlos.oliveira@hospital.com', 5, 1, '2025-10-02 11:19:06.297505', '2025-10-02 11:19:06.297505') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mMedicoEspecialidade Exists? (1.8ms)[0m  [1m[34mSELECT 1 AS one FROM "medico_especialidades" WHERE "medico_especialidades"."medico_id" = 3 AND "medico_especialidades"."especialidade_id" = 2 LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mMedicoEspecialidade Create (0.2ms)[0m  [1m[32mINSERT INTO "medico_especialidades" ("medico_id", "especialidade_id", "created_at", "updated_at") VALUES (3, 2, '2025-10-02 11:19:06.309998', '2025-10-02 11:19:06.309998') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Exists? (1.5ms)[0m  [1m[34mSELECT 1 AS one FROM "usuarios" WHERE "usuarios"."username" = 'paciente1' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Create (0.1ms)[0m  [1m[32mINSERT INTO "usuarios" ("username", "hash_senha", "papel", "mfa_enabled", "created_at", "updated_at") VALUES ('paciente1', '$2a$12$pAh1qqppq9fM/7vd.FNcLuDBLw/QpgZDFveg92nuUDc9qwfS3vTrC', 'paciente', 0, '2025-10-02 11:19:06.628154', '2025-10-02 11:19:06.628154') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mPaciente Exists? (1.5ms)[0m  [1m[34mSELECT 1 AS one FROM "pacientes" WHERE "pacientes"."cpf" = '12345678901' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mPaciente Create (0.2ms)[0m  [1m[32mINSERT INTO "pacientes" ("nome", "cpf", "data_nascimento", "telefone", "email", "sexo", "endereco", "usuario_id", "ativo", "created_at", "updated_at") VALUES ('Ana Paula Costa', '12345678901', '1990-05-15', '11987654324', 'ana.costa@email.com', 'F', 'Rua das Flores, 123 - São Paulo/SP', 6, 1, '2025-10-02 11:19:06.671100', '2025-10-02 11:19:06.671100') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Exists? (1.6ms)[0m  [1m[34mSELECT 1 AS one FROM "usuarios" WHERE "usuarios"."username" = 'paciente2' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Create (0.1ms)[0m  [1m[32mINSERT INTO "usuarios" ("username", "hash_senha", "papel", "mfa_enabled", "created_at", "updated_at") VALUES ('paciente2', '$2a$12$sgepXLlf6XYazxnH44BrHO1g3WynzTZaV19m5RmR9OomdYDcWT.ri', 'paciente', 0, '2025-10-02 11:19:06.995493', '2025-10-02 11:19:06.995493') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mPaciente Exists? (1.4ms)[0m  [1m[34mSELECT 1 AS one FROM "pacientes" WHERE "pacientes"."cpf" = '23456789012' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mPaciente Create (0.1ms)[0m  [1m[32mINSERT INTO "pacientes" ("nome", "cpf", "data_nascimento", "telefone", "email", "sexo", "endereco", "usuario_id", "ativo", "created_at", "updated_at") VALUES ('Pedro Henrique Alves', '23456789012', '1985-08-20', '11987654325', 'pedro.alves@email.com', 'M', 'Av. Paulista, 456 - São Paulo/SP', 7, 1, '2025-10-02 11:19:07.002974', '2025-10-02 11:19:07.002974') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mPaciente Exists? (1.6ms)[0m  [1m[34mSELECT 1 AS one FROM "pacientes" WHERE "pacientes"."cpf" = '34567890123' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mPaciente Create (0.2ms)[0m  [1m[32mINSERT INTO "pacientes" ("nome", "cpf", "data_nascimento", "telefone", "email", "sexo", "endereco", "usuario_id", "ativo", "created_at", "updated_at") VALUES ('Julia Fernandes Silva', '34567890123', '2015-03-10', '11987654326', 'responsavel.julia@email.com', 'F', 'Rua dos Lírios, 789 - São Paulo/SP', NULL, 1, '2025-10-02 11:19:07.009952', '2025-10-02 11:19:07.009952') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mConvenio Create (1.6ms)[0m  [1m[32mINSERT INTO "convenios" ("nome", "ans", "ativo", "created_at", "updated_at") VALUES ('Unimed', '123456', 1, '2025-10-02 11:19:07.035757', '2025-10-02 11:19:07.035757') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mConvenio Create (5.7ms)[0m  [1m[32mINSERT INTO "convenios" ("nome", "ans", "ativo", "created_at", "updated_at") VALUES ('Bradesco Saúde', '789012', 1, '2025-10-02 11:19:07.049863', '2025-10-02 11:19:07.049863') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mPlano Create (3.2ms)[0m  [1m[32mINSERT INTO "planos" ("convenio_id", "nome", "regras", "created_at", "updated_at") VALUES (1, 'Unimed Premium', '{"cobertura":"completa","carencia":0}', '2025-10-02 11:19:07.103089', '2025-10-02 11:19:07.103089') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mPlano Create (5.1ms)[0m  [1m[32mINSERT INTO "planos" ("convenio_id", "nome", "regras", "created_at", "updated_at") VALUES (2, 'Bradesco Top', '{"cobertura":"completa","carencia":30}', '2025-10-02 11:19:07.128357', '2025-10-02 11:19:07.128357') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mPacientePlano Exists? (1.5ms)[0m  [1m[34mSELECT 1 AS one FROM "paciente_planos" WHERE "paciente_planos"."paciente_id" = 1 AND "paciente_planos"."plano_id" = 1 LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mPacientePlano Create (0.1ms)[0m  [1m[32mINSERT INTO "paciente_planos" ("paciente_id", "plano_id", "numero_carteira", "validade", "created_at", "updated_at") VALUES (1, 1, '1234567890', '2026-10-02', '2025-10-02 11:19:07.167384', '2025-10-02 11:19:07.167384') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mPacientePlano Exists? (1.4ms)[0m  [1m[34mSELECT 1 AS one FROM "paciente_planos" WHERE "paciente_planos"."paciente_id" = 2 AND "paciente_planos"."plano_id" = 2 LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mPacientePlano Create (0.1ms)[0m  [1m[32mINSERT INTO "paciente_planos" ("paciente_id", "plano_id", "numero_carteira", "validade", "created_at", "updated_at") VALUES (2, 2, '0987654321', '2027-10-02', '2025-10-02 11:19:07.183793', '2025-10-02 11:19:07.183793') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mUnidade Exists? (2.5ms)[0m  [1m[34mSELECT 1 AS one FROM "unidades" WHERE "unidades"."cnpj" = '12345678000190' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUnidade Create (0.2ms)[0m  [1m[32mINSERT INTO "unidades" ("nome", "cnpj", "endereco", "telefone", "created_at", "updated_at") VALUES ('Hospital Central', '12345678000190', 'Av. Central, 1000 - São Paulo/SP', '1133334444', '2025-10-02 11:19:07.206858', '2025-10-02 11:19:07.206858') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mUnidade Exists? (1.5ms)[0m  [1m[34mSELECT 1 AS one FROM "unidades" WHERE "unidades"."cnpj" = '98765432000110' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUnidade Create (0.1ms)[0m  [1m[32mINSERT INTO "unidades" ("nome", "cnpj", "endereco", "telefone", "created_at", "updated_at") VALUES ('Clínica do Bairro', '98765432000110', 'Rua do Comércio, 200 - São Paulo/SP', '1133335555', '2025-10-02 11:19:07.226696', '2025-10-02 11:19:07.226696') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mSala Create (1.7ms)[0m  [1m[32mINSERT INTO "salas" ("unidade_id", "nome", "recursos", "ativa", "created_at", "updated_at") VALUES (1, 'Consultório 101', 'Mesa, cadeiras, maca, computador', 1, '2025-10-02 11:19:07.257746', '2025-10-02 11:19:07.257746') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mSala Create (6.0ms)[0m  [1m[32mINSERT INTO "salas" ("unidade_id", "nome", "recursos", "ativa", "created_at", "updated_at") VALUES (1, 'Consultório 102', 'Mesa, cadeiras, maca, eletrocardiógrafo', 1, '2025-10-02 11:19:07.269843', '2025-10-02 11:19:07.269843') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mSala Create (1.3ms)[0m  [1m[32mINSERT INTO "salas" ("unidade_id", "nome", "recursos", "ativa", "created_at", "updated_at") VALUES (2, 'Consultório A', 'Mesa, cadeiras, maca', 1, '2025-10-02 11:19:07.282848', '2025-10-02 11:19:07.282848') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mAgenda Create (1.6ms)[0m  [1m[32mINSERT INTO "agendas" ("medico_id", "unidade_id", "duracao_slot_min", "data_inicio", "data_fim", "dias_semana", "hora_inicio", "hora_fim", "politica_intervalo", "permite_teleconsulta", "created_at", "updated_at") VALUES (1, 1, 30, '2025-10-02', '2025-11-01', 'MON,WED,FRI', '2000-01-01 09:00:00', '2000-01-01 17:00:00', 0, 1, '2025-10-02 11:19:07.325672', '2025-10-02 11:19:07.325672') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mAgenda Create (1.3ms)[0m  [1m[32mINSERT INTO "agendas" ("medico_id", "unidade_id", "duracao_slot_min", "data_inicio", "data_fim", "dias_semana", "hora_inicio", "hora_fim", "politica_intervalo", "permite_teleconsulta", "created_at", "updated_at") VALUES (2, 1, 20, '2025-10-02', '2025-11-01', 'TUE,THU', '2000-01-01 08:00:00', '2000-01-01 12:00:00', 10, 0, '2025-10-02 11:19:07.336529', '2025-10-02 11:19:07.336529') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mAgenda Create (1.4ms)[0m  [1m[32mINSERT INTO "agendas" ("medico_id", "unidade_id", "duracao_slot_min", "data_inicio", "data_fim", "dias_semana", "hora_inicio", "hora_fim", "politica_intervalo", "permite_teleconsulta", "created_at", "updated_at") VALUES (3, 2, 45, '2025-10-02', '2025-11-01', 'MON,TUE,WED,THU,FRI', '2000-01-01 14:00:00', '2000-01-01 18:00:00', 15, 0, '2025-10-02 11:19:07.347278', '2025-10-02 11:19:07.347278') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mConsulta Create (1.4ms)[0m  [1m[32mINSERT INTO "consultas" ("paciente_id", "medico_id", "unidade_id", "sala_id", "especialidade_id", "inicio", "fim", "tipo", "status", "origem", "observacoes", "created_at", "updated_at") VALUES (1, 1, 1, 1, 1, '2025-10-03 21:19:07.350984', '2025-10-03 21:49:07.351297', 'presencial', 'confirmada', 'app', 'Consulta de rotina', '2025-10-02 11:19:07.378900', '2025-10-02 11:19:07.378900') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mConsulta Create (1.5ms)[0m  [1m[32mINSERT INTO "consultas" ("paciente_id", "medico_id", "unidade_id", "sala_id", "especialidade_id", "inicio", "fim", "tipo", "status", "origem", "observacoes", "created_at", "updated_at") VALUES (3, 2, 1, 2, 3, '2025-10-04 20:19:07.387634', '2025-10-04 20:39:07.388470', 'presencial', 'marcada', 'recepcao', 'Primeira consulta', '2025-10-02 11:19:07.393072', '2025-10-02 11:19:07.393072') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mConsulta Create (2.1ms)[0m  [1m[32mINSERT INTO "consultas" ("paciente_id", "medico_id", "unidade_id", "sala_id", "especialidade_id", "inicio", "fim", "tipo", "status", "origem", "observacoes", "created_at", "updated_at") VALUES (2, 1, 1, NULL, 4, '2025-10-06 02:19:07.396914', '2025-10-06 02:49:07.396990', 'teleconsulta', 'marcada', 'app', NULL, '2025-10-02 11:19:07.397637', '2025-10-02 11:19:07.397637') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mLembrete Create (1.3ms)[0m  [1m[32mINSERT INTO "lembretes" ("consulta_id", "canal", "enviado_em", "status", "created_at", "updated_at") VALUES (1, 'email', NULL, 'pendente', '2025-10-02 11:19:07.416763', '2025-10-02 11:19:07.416763') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mLembrete Create (1.4ms)[0m  [1m[32mINSERT INTO "lembretes" ("consulta_id", "canal", "enviado_em", "status", "created_at", "updated_at") VALUES (1, 'whatsapp', NULL, 'pendente', '2025-10-02 11:19:07.424821', '2025-10-02 11:19:07.424821') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mLembrete Create (1.2ms)[0m  [1m[32mINSERT INTO "lembretes" ("consulta_id", "canal", "enviado_em", "status", "created_at", "updated_at") VALUES (2, 'sms', NULL, 'pendente', '2025-10-02 11:19:07.429443', '2025-10-02 11:19:07.429443') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mPagamento Create (1.4ms)[0m  [1m[32mINSERT INTO "pagamentos" ("consulta_id", "valor", "forma", "status", "created_at", "updated_at") VALUES (1, 250.0, 'cartao', 'aprovado', '2025-10-02 11:19:07.453938', '2025-10-02 11:19:07.453938') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mPagamento Create (1.3ms)[0m  [1m[32mINSERT INTO "pagamentos" ("consulta_id", "valor", "forma", "status", "created_at", "updated_at") VALUES (2, 180.0, 'pix', 'pendente', '2025-10-02 11:19:07.463078', '2025-10-02 11:19:07.463078') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mBloqueioAgenda Create (2.3ms)[0m  [1m[32mINSERT INTO "bloqueio_agendas" ("agenda_id", "inicio", "fim", "motivo", "created_at", "updated_at") VALUES (1, '2025-10-10 00:19:07.467604', '2025-10-10 02:19:07.467725', 'Reunião administrativa', '2025-10-02 11:19:07.485815', '2025-10-02 11:19:07.485815') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mHorario Update All (0.1ms)[0m  [1m[33mUPDATE "horarios" SET "status" = 'bloqueado' WHERE "horarios"."agenda_id" = 1 AND (inicio >= '2025-10-10 00:19:07.467604' AND fim <= '2025-10-10 02:19:07.467725') /*application='HOcalendar'*/[0m
+  ↳ app/models/bloqueio_agenda.rb:24:in 'BloqueioAgenda#bloquear_horarios'
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "usuarios" /*application='HOcalendar'*/[0m
+  [1m[36mMedico Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "medicos" /*application='HOcalendar'*/[0m
+  [1m[36mPaciente Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "pacientes" /*application='HOcalendar'*/[0m
+  [1m[36mEspecialidade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "especialidades" /*application='HOcalendar'*/[0m
+  [1m[36mUnidade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "unidades" /*application='HOcalendar'*/[0m
+  [1m[36mSala Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "salas" /*application='HOcalendar'*/[0m
+  [1m[36mConvenio Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "convenios" /*application='HOcalendar'*/[0m
+  [1m[36mPlano Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "planos" /*application='HOcalendar'*/[0m
+  [1m[36mAgenda Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "agendas" /*application='HOcalendar'*/[0m
+  [1m[36mConsulta Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "consultas" /*application='HOcalendar'*/[0m
+  [1m[36mLembrete Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "lembretes" /*application='HOcalendar'*/[0m
+  [1m[36mPagamento Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "pagamentos" /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (2.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+Started GET "/" for 127.0.0.1 at 2025-10-02 07:30:39 -0400
+  [1m[36mActiveRecord::SchemaMigration Load (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+  
+ArgumentError (Route `resource :dashboard` - :only and :except must include only [:show, :create, :update, :destroy, :new, :edit], but also included [:index]):
+  
+config/routes.rb:28:in 'block in <main>'
+config/routes.rb:1:in '<main>'
+Started GET "/favicon.ico" for 127.0.0.1 at 2025-10-02 07:30:40 -0400
+  
+ActionController::RoutingError (No route matches [GET] "/favicon.ico"):
+  
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+Migrating to AddPasswordDigestToUsuarios (20251002123000)
+  [1m[35m (17.2ms)[0m  [1m[35mALTER TABLE "usuarios" ADD "password_digest" varchar /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[33mUPDATE usuarios SET password_digest = hash_senha WHERE hash_senha IS NOT NULL; /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.5ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002123000') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."username" = 'admin' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Load (0.2ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."username" = 'admin' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."username" = 'atendente' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Load (0.3ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."username" = 'dr.silva' LIMIT 1 /*application='HOcalendar'*/[0m
+Started GET "/" for 127.0.0.1 at 2025-10-02 07:37:28 -0400
+  [1m[36mActiveRecord::SchemaMigration Load (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+  
+ArgumentError (Route `resource :dashboard` - :only and :except must include only [:show, :create, :update, :destroy, :new, :edit], but also included [:index]):
+  
+config/routes.rb:28:in 'block in <main>'
+config/routes.rb:1:in '<main>'
+Started GET "/" for 127.0.0.1 at 2025-10-02 07:37:33 -0400
+Processing by DashboardController#index as HTML
+Redirected to http://127.0.0.1:3000/login
+Filter chain halted as :authenticate_usuario! rendered or redirected
+Completed 302 Found in 34ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/login" for 127.0.0.1 at 2025-10-02 07:37:34 -0400
+Processing by SessionsController#new as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering sessions/new.html.erb within layouts/application
+  Rendered sessions/new.html.erb within layouts/application (Duration: 9.9ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 23.3ms | GC: 2.4ms)
+Completed 200 OK in 39ms (Views: 25.9ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 2.4ms)
+
+
+Started POST "/login" for 127.0.0.1 at 2025-10-02 07:37:40 -0400
+Processing by SessionsController#create as HTML
+  Parameters: {"authenticity_token" => "[FILTERED]", "username" => "admin", "password" => "[FILTERED]"}
+  [1m[36mUsuario Load (0.2ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."username" = 'admin' LIMIT 1 /*action='create',application='HOcalendar',controller='sessions'*/[0m
+  ↳ app/controllers/sessions_controller.rb:7:in 'SessionsController#create'
+Redirected to http://127.0.0.1:3000/
+Completed 302 Found in 404ms (ActiveRecord: 3.9ms (1 query, 0 cached) | GC: 3.9ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-10-02 07:37:40 -0400
+Processing by DashboardController#index as HTML
+  [1m[36mUsuario Load (6.4ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mConsulta Load (1.5ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE (inicio > '2025-10-02 11:37:40.538492') ORDER BY "consultas"."inicio" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:6
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:8
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:8
+  [1m[36mPaciente Load (0.9ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:8
+  [1m[36mMedico Load (2.2ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:8
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:8
+  [1m[36mCACHE Medico Load (0.4ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:8
+  [1m[36mMedico Load (0.6ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 5 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:17
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:18
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 2 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:18
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 3 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:18
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 301.6ms | GC: 16.6ms)
+  Rendered layout layouts/application.html.erb (Duration: 305.3ms | GC: 16.6ms)
+Completed 500 Internal Server Error in 416ms (ActiveRecord: 13.2ms (12 queries, 1 cached) | GC: 17.0ms)
+
+
+  
+ActionView::Template::Error (undefined local variable or method 'consultas_path' for an instance of #<Class:0x00007ffa320d91a0>)
+Caused by: NameError (undefined local variable or method 'consultas_path' for an instance of #<Class:0x00007ffa320d91a0>)
+
+Information for: ActionView::Template::Error (undefined local variable or method 'consultas_path' for an instance of #<Class:0x00007ffa320d91a0>):
+    31:           <% if usuario_signed_in? %>
+    32:             <span class="meta">Olá, <%= current_usuario.username %></span>
+    33:             <%= link_to 'Dashboard', root_path %>
+    34:             <%= link_to 'Consultas', consultas_path %>
+    35:             <% if current_usuario.papel == 'admin' || current_usuario.papel == 'atendente' %>
+    36:               <%= link_to 'Nova Consulta', new_consulta_path %>
+    37:             <% end %>
+  
+app/views/layouts/application.html.erb:34
+
+Information for cause: NameError (undefined local variable or method 'consultas_path' for an instance of #<Class:0x00007ffa320d91a0>):
+  
+app/views/layouts/application.html.erb:34
+Started GET "/" for 127.0.0.1 at 2025-10-02 07:38:13 -0400
+  [1m[36mActiveRecord::SchemaMigration Load (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+Processing by DashboardController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE (inicio > '2025-10-02 11:38:13.740510') ORDER BY "consultas"."inicio" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:6
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:8
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:8
+  [1m[36mPaciente Load (0.5ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:8
+  [1m[36mMedico Load (0.8ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:8
+  [1m[36mPaciente Load (2.6ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:8
+  [1m[36mCACHE Medico Load (1.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:8
+  [1m[36mMedico Load (0.6ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 5 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:17
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:18
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 2 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:18
+  [1m[36mEspecialidade Pluck (0.2ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 3 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:18
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 263.8ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 285.1ms | GC: 0.0ms)
+Completed 200 OK in 451ms (Views: 286.8ms | ActiveRecord: 17.3ms (12 queries, 1 cached) | GC: 0.0ms)
+
+
+  [1m[36mConsulta Count (2.9ms)[0m  [1m[34mSELECT COUNT(*) FROM "consultas" WHERE (inicio > '2025-10-02 11:40:45.340631') /*application='HOcalendar'*/[0m
+  [1m[36mConsulta Load (0.2ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE (inicio > '2025-10-02 11:40:53.769212') ORDER BY "consultas"."inicio" ASC LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mPaciente Load (0.4ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Load (0.2ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."papel" = 'paciente' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mPaciente Load (0.4ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."usuario_id" = 6 LIMIT 1 /*application='HOcalendar'*/[0m
+Started GET "/" for 127.0.0.1 at 2025-10-02 07:41:16 -0400
+  [1m[36mActiveRecord::SchemaMigration Load (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+Processing by DashboardController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mConsulta Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "consultas" WHERE (inicio > '2025-10-02 11:41:16.575929') LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:7
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE (inicio > '2025-10-02 11:41:16.575929') ORDER BY "consultas"."inicio" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:9
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.5ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.8ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (2.5ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mCACHE Medico Load (0.9ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mMedico Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:27
+  [1m[36mMedico Load (0.5ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 5 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:29
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 2 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 3 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mPaciente Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "pacientes" WHERE "pacientes"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:51
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 ORDER BY "pacientes"."nome" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:53
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 255.7ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 270.4ms | GC: 0.0ms)
+Completed 200 OK in 465ms (Views: 272.7ms | ActiveRecord: 17.4ms (16 queries, 1 cached) | GC: 0.0ms)
+
+
+  [1m[36mUsuario Load (0.2ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."username" = 'testepaciente' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Exists? (2.4ms)[0m  [1m[34mSELECT 1 AS one FROM "usuarios" WHERE "usuarios"."username" = 'testepaciente' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Create (0.5ms)[0m  [1m[32mINSERT INTO "usuarios" ("username", "hash_senha", "papel", "mfa_enabled", "created_at", "updated_at", "password_digest") VALUES ('testepaciente', NULL, 'paciente', 0, '2025-10-02 11:42:51.876984', '2025-10-02 11:42:51.876984', '$2a$12$pDJqUZnnGWKW94JdGWs4XOY.YapFV206XpFgX3BOKRPTUDR/PjJuO') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Load (0.2ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."username" = 'testepaciente' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Exists? (11.1ms)[0m  [1m[34mSELECT 1 AS one FROM "usuarios" WHERE "usuarios"."username" = 'testepaciente' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Create (0.7ms)[0m  [1m[32mINSERT INTO "usuarios" ("username", "hash_senha", "papel", "mfa_enabled", "created_at", "updated_at", "password_digest") VALUES ('testepaciente', NULL, 'paciente', 0, '2025-10-02 11:43:52.904562', '2025-10-02 11:43:52.904562', '$2a$12$vv1lRLkMtLiOq6HcPPZl5.TYIxbJHP9W5d89oQym8fMU0EOEf6Ogi') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.2ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+Migrating to AllowNullHashSenhaInUsuarios (20251002150000)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[35mSQL (0.5ms)[0m  [1m[35mPRAGMA foreign_keys /*application='HOcalendar'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys /*application='HOcalendar'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys = ON /*application='HOcalendar'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys = OFF /*application='HOcalendar'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE TEMPORARY TABLE "ausuarios" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "username" varchar(50) NOT NULL, "hash_senha" varchar(255) NOT NULL, "papel" varchar NOT NULL, "mfa_enabled" boolean DEFAULT 0, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "password_digest" varchar) /*application='HOcalendar'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE UNIQUE INDEX "tindex_ausuarios_on_username" ON "ausuarios" ("username") /*application='HOcalendar'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[32mINSERT INTO "ausuarios" ("id","username","hash_senha","papel","mfa_enabled","created_at","updated_at","password_digest")
+                     SELECT "id","username","hash_senha","papel","mfa_enabled","created_at","updated_at","password_digest" FROM "usuarios" /*application='HOcalendar'*/[0m
+  [1m[35m (2.4ms)[0m  [1m[35mDROP TABLE "usuarios" /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TABLE "usuarios" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "username" varchar(50) NOT NULL, "hash_senha" varchar(255), "papel" varchar NOT NULL, "mfa_enabled" boolean DEFAULT 0, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "password_digest" varchar) /*application='HOcalendar'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_usuarios_on_username" ON "usuarios" ("username") /*application='HOcalendar'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[32mINSERT INTO "usuarios" ("id","username","hash_senha","papel","mfa_enabled","created_at","updated_at","password_digest")
+                     SELECT "id","username","hash_senha","papel","mfa_enabled","created_at","updated_at","password_digest" FROM "ausuarios" /*application='HOcalendar'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE "ausuarios" /*application='HOcalendar'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys = 0 /*application='HOcalendar'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys = 1 /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20251002150000') RETURNING "version" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (17.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Exists? (10.5ms)[0m  [1m[34mSELECT 1 AS one FROM "usuarios" WHERE "usuarios"."username" = 'testepaciente' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mUsuario Create (0.2ms)[0m  [1m[32mINSERT INTO "usuarios" ("username", "hash_senha", "papel", "mfa_enabled", "created_at", "updated_at", "password_digest") VALUES ('testepaciente', NULL, 'paciente', 0, '2025-10-02 11:44:23.536622', '2025-10-02 11:44:23.536622', '$2a$12$3bXsjPL5fH38ctWeVrdJSOYJOblJo.IlojQGIUvKUa5f6S89VNjem') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (4.7ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (4.4ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='HOcalendar'*/[0m
+  [1m[36mPaciente Exists? (13.8ms)[0m  [1m[34mSELECT 1 AS one FROM "pacientes" WHERE "pacientes"."cpf" = '99988877766' LIMIT 1 /*application='HOcalendar'*/[0m
+  [1m[36mPaciente Create (0.2ms)[0m  [1m[32mINSERT INTO "pacientes" ("nome", "cpf", "data_nascimento", "telefone", "email", "sexo", "endereco", "usuario_id", "ativo", "created_at", "updated_at") VALUES ('Teste Paciente', '99988877766', NULL, NULL, 'teste@local', NULL, NULL, 8, 1, '2025-10-02 11:44:23.642024', '2025-10-02 11:44:23.642024') RETURNING "id" /*application='HOcalendar'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='HOcalendar'*/[0m
+Started GET "/" for 127.0.0.1 at 2025-10-02 07:44:43 -0400
+  [1m[36mActiveRecord::SchemaMigration Load (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+Processing by DashboardController#index as HTML
+  [1m[36mUsuario Load (0.2ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mConsulta Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "consultas" WHERE (inicio > '2025-10-02 11:44:43.878394') LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:7
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE (inicio > '2025-10-02 11:44:43.878394') ORDER BY "consultas"."inicio" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:9
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.5ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.9ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (2.5ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mCACHE Medico Load (0.9ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mMedico Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:27
+  [1m[36mMedico Load (0.6ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 5 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:29
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 2 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 3 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mPaciente Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "pacientes" WHERE "pacientes"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:51
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 ORDER BY "pacientes"."nome" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:53
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 256.8ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 272.5ms | GC: 0.0ms)
+Completed 200 OK in 464ms (Views: 274.3ms | ActiveRecord: 17.8ms (16 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-10-02 07:44:47 -0400
+Processing by DashboardController#index as HTML
+  [1m[36mUsuario Load (1.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mConsulta Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "consultas" WHERE (inicio > '2025-10-02 11:44:47.489522') LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:7
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE (inicio > '2025-10-02 11:44:47.489522') ORDER BY "consultas"."inicio" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:9
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mCACHE Medico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mMedico Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:27
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 5 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:29
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 2 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 3 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mPaciente Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "pacientes" WHERE "pacientes"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:51
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 ORDER BY "pacientes"."nome" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:53
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 92.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 99.3ms | GC: 0.0ms)
+Completed 200 OK in 124ms (Views: 99.3ms | ActiveRecord: 2.5ms (16 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/logout" for 127.0.0.1 at 2025-10-02 07:44:49 -0400
+  
+ActionController::RoutingError (No route matches [GET] "/logout"):
+  
+Started GET "/logout" for 127.0.0.1 at 2025-10-02 07:44:50 -0400
+  
+ActionController::RoutingError (No route matches [GET] "/logout"):
+  
+Started GET "/" for 127.0.0.1 at 2025-10-02 07:44:53 -0400
+Processing by DashboardController#index as HTML
+  [1m[36mUsuario Load (0.5ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mConsulta Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "consultas" WHERE (inicio > '2025-10-02 11:44:53.165138') LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:7
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE (inicio > '2025-10-02 11:44:53.165138') ORDER BY "consultas"."inicio" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:9
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mMedico Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:27
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 5 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:29
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 2 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 3 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mPaciente Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "pacientes" WHERE "pacientes"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:51
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 ORDER BY "pacientes"."nome" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:53
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 51.3ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 53.8ms | GC: 0.0ms)
+Completed 200 OK in 72ms (Views: 53.5ms | ActiveRecord: 2.0ms (16 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/consultas/new" for 127.0.0.1 at 2025-10-02 07:44:55 -0400
+Processing by ConsultasController#new as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/new.html.erb within layouts/application
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:10
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:16
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:21
+  [1m[36mSala Load (0.1ms)[0m  [1m[34mSELECT "salas".* FROM "salas" WHERE "salas"."ativa" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:26
+  [1m[36mEspecialidade Load (0.1ms)[0m  [1m[34mSELECT "especialidades".* FROM "especialidades" /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:31
+  Rendered consultas/new.html.erb within layouts/application (Duration: 86.8ms | GC: 20.7ms)
+  Rendered layout layouts/application.html.erb (Duration: 92.1ms | GC: 20.7ms)
+Completed 200 OK in 141ms (Views: 93.0ms | ActiveRecord: 1.4ms (6 queries, 0 cached) | GC: 20.7ms)
+
+
+Started POST "/consultas" for 127.0.0.1 at 2025-10-02 07:45:18 -0400
+Processing by ConsultasController#create as HTML
+  Parameters: {"authenticity_token" => "[FILTERED]", "consulta" => {"paciente_id" => "1", "medico_id" => "1", "unidade_id" => "1", "sala_id" => "1", "especialidade_id" => "2", "inicio" => "2025-10-03T11:44:55", "fim" => "", "tipo" => "presencial", "status" => "confirmada"}, "commit" => "Criar Consulta"}
+  [1m[36mUsuario Load (0.2ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/consultas_controller.rb:38:in 'ConsultasController#create'
+  [1m[36mPaciente Load (3.4ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/consultas_controller.rb:38:in 'ConsultasController#create'
+  [1m[36mMedico Load (0.2ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/consultas_controller.rb:38:in 'ConsultasController#create'
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/consultas_controller.rb:38:in 'ConsultasController#create'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK TRANSACTION /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/consultas_controller.rb:38:in 'ConsultasController#create'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/new.html.erb within layouts/application
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:10
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:16
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:21
+  [1m[36mSala Load (0.1ms)[0m  [1m[34mSELECT "salas".* FROM "salas" WHERE "salas"."ativa" = 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:26
+  [1m[36mEspecialidade Load (0.1ms)[0m  [1m[34mSELECT "especialidades".* FROM "especialidades" /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:31
+  Rendered consultas/new.html.erb within layouts/application (Duration: 25.5ms | GC: 0.9ms)
+  Rendered layout layouts/application.html.erb (Duration: 32.9ms | GC: 0.9ms)
+Completed 422 Unprocessable Content in 109ms (Views: 33.6ms | ActiveRecord: 5.0ms (9 queries, 0 cached) | GC: 2.3ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-10-02 07:45:21 -0400
+Processing by DashboardController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mConsulta Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "consultas" WHERE (inicio > '2025-10-02 11:45:21.502220') LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:7
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE (inicio > '2025-10-02 11:45:21.502220') ORDER BY "consultas"."inicio" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:9
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mMedico Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:27
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 5 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:29
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 2 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 3 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mPaciente Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "pacientes" WHERE "pacientes"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:51
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 ORDER BY "pacientes"."nome" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:53
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 48.3ms | GC: 1.9ms)
+  Rendered layout layouts/application.html.erb (Duration: 65.0ms | GC: 1.9ms)
+Completed 200 OK in 85ms (Views: 66.1ms | ActiveRecord: 1.4ms (16 queries, 1 cached) | GC: 1.9ms)
+
+
+Started GET "/consultas/new" for 127.0.0.1 at 2025-10-02 07:45:26 -0400
+Processing by ConsultasController#new as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/new.html.erb within layouts/application
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:10
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:16
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:21
+  [1m[36mSala Load (0.1ms)[0m  [1m[34mSELECT "salas".* FROM "salas" WHERE "salas"."ativa" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:26
+  [1m[36mEspecialidade Load (0.1ms)[0m  [1m[34mSELECT "especialidades".* FROM "especialidades" /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:31
+  Rendered consultas/new.html.erb within layouts/application (Duration: 15.7ms | GC: 0.7ms)
+  Rendered layout layouts/application.html.erb (Duration: 16.8ms | GC: 0.7ms)
+Completed 200 OK in 32ms (Views: 18.5ms | ActiveRecord: 0.6ms (6 queries, 0 cached) | GC: 0.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-10-02 07:45:30 -0400
+Processing by DashboardController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mConsulta Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "consultas" WHERE (inicio > '2025-10-02 11:45:30.183347') LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:7
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE (inicio > '2025-10-02 11:45:30.183347') ORDER BY "consultas"."inicio" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:9
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mMedico Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:27
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 5 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:29
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 2 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 3 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mPaciente Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "pacientes" WHERE "pacientes"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:51
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 ORDER BY "pacientes"."nome" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:53
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 31.2ms | GC: 1.6ms)
+  Rendered layout layouts/application.html.erb (Duration: 33.0ms | GC: 1.6ms)
+Completed 200 OK in 54ms (Views: 39.5ms | ActiveRecord: 1.3ms (16 queries, 1 cached) | GC: 1.6ms)
+
+
+Started GET "/consultas" for 127.0.0.1 at 2025-10-02 07:45:31 -0400
+Processing by ConsultasController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/index.html.erb within layouts/application
+  [1m[36mConsulta Load (0.2ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" ORDER BY "consultas"."inicio" DESC LIMIT 50 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:17
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  Rendered consultas/index.html.erb within layouts/application (Duration: 18.6ms | GC: 0.6ms)
+  Rendered layout layouts/application.html.erb (Duration: 20.6ms | GC: 0.6ms)
+Completed 200 OK in 32ms (Views: 20.7ms | ActiveRecord: 0.8ms (11 queries, 3 cached) | GC: 0.6ms)
+
+
+Started GET "/consultas/new" for 127.0.0.1 at 2025-10-02 07:45:37 -0400
+Processing by ConsultasController#new as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/new.html.erb within layouts/application
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:10
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:16
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:21
+  [1m[36mSala Load (0.1ms)[0m  [1m[34mSELECT "salas".* FROM "salas" WHERE "salas"."ativa" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:26
+  [1m[36mEspecialidade Load (0.1ms)[0m  [1m[34mSELECT "especialidades".* FROM "especialidades" /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:31
+  Rendered consultas/new.html.erb within layouts/application (Duration: 25.7ms | GC: 1.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 26.6ms | GC: 1.0ms)
+Completed 200 OK in 46ms (Views: 28.0ms | ActiveRecord: 0.6ms (6 queries, 0 cached) | GC: 1.0ms)
+
+
+Started POST "/consultas" for 127.0.0.1 at 2025-10-02 07:45:59 -0400
+Processing by ConsultasController#create as HTML
+  Parameters: {"authenticity_token" => "[FILTERED]", "consulta" => {"paciente_id" => "4", "medico_id" => "1", "unidade_id" => "1", "sala_id" => "1", "especialidade_id" => "1", "inicio" => "2025-10-03T11:45:37", "fim" => "2025-10-03T14:14", "tipo" => "presencial", "status" => "marcada"}, "commit" => "Criar Consulta"}
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/consultas_controller.rb:38:in 'ConsultasController#create'
+  [1m[36mPaciente Load (4.0ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 4 LIMIT 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/consultas_controller.rb:38:in 'ConsultasController#create'
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/consultas_controller.rb:38:in 'ConsultasController#create'
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/consultas_controller.rb:38:in 'ConsultasController#create'
+  [1m[36mConsulta Create (0.2ms)[0m  [1m[32mINSERT INTO "consultas" ("paciente_id", "medico_id", "unidade_id", "sala_id", "especialidade_id", "inicio", "fim", "tipo", "status", "origem", "observacoes", "created_at", "updated_at") VALUES (4, 1, 1, 1, 1, '2025-10-03 11:45:37', '2025-10-03 14:14:00', 'presencial', 'marcada', 'app', NULL, '2025-10-02 11:45:59.352164', '2025-10-02 11:45:59.352164') RETURNING "id" /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/consultas_controller.rb:38:in 'ConsultasController#create'
+  [1m[36mTRANSACTION (18.0ms)[0m  [1m[35mCOMMIT TRANSACTION /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/consultas_controller.rb:38:in 'ConsultasController#create'
+Redirected to http://127.0.0.1:3000/consultas/4
+Completed 302 Found in 115ms (ActiveRecord: 22.5ms (5 queries, 0 cached) | GC: 15.7ms)
+
+
+Started GET "/consultas/4" for 127.0.0.1 at 2025-10-02 07:45:59 -0400
+Processing by ConsultasController#show as HTML
+  Parameters: {"id" => "4"}
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='show',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE "consultas"."id" = 4 LIMIT 1 /*action='show',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/consultas_controller.rb:24:in 'ConsultasController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/show.html.erb within layouts/application
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 4 LIMIT 1 /*action='show',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/show.html.erb:3
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='show',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/show.html.erb:4
+  Rendered consultas/show.html.erb within layouts/application (Duration: 7.2ms | GC: 3.2ms)
+  Rendered layout layouts/application.html.erb (Duration: 10.3ms | GC: 4.0ms)
+Completed 200 OK in 27ms (Views: 10.9ms | ActiveRecord: 0.4ms (4 queries, 0 cached) | GC: 6.5ms)
+
+
+Started GET "/consultas" for 127.0.0.1 at 2025-10-02 07:46:03 -0400
+Processing by ConsultasController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/index.html.erb within layouts/application
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" ORDER BY "consultas"."inicio" DESC LIMIT 50 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:17
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.6ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 4 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  Rendered consultas/index.html.erb within layouts/application (Duration: 26.3ms | GC: 11.6ms)
+  Rendered layout layouts/application.html.erb (Duration: 28.3ms | GC: 12.1ms)
+Completed 200 OK in 45ms (Views: 27.7ms | ActiveRecord: 1.4ms (14 queries, 5 cached) | GC: 13.6ms)
+
+
+Started GET "/consultas" for 127.0.0.1 at 2025-10-02 07:46:04 -0400
+Processing by ConsultasController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/index.html.erb within layouts/application
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" ORDER BY "consultas"."inicio" DESC LIMIT 50 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:17
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (1.3ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 4 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  Rendered consultas/index.html.erb within layouts/application (Duration: 15.3ms | GC: 1.1ms)
+  Rendered layout layouts/application.html.erb (Duration: 16.1ms | GC: 1.1ms)
+Completed 200 OK in 40ms (Views: 14.6ms | ActiveRecord: 2.0ms (14 queries, 5 cached) | GC: 11.4ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-10-02 07:46:07 -0400
+Processing by DashboardController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mConsulta Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "consultas" WHERE (inicio > '2025-10-02 11:46:07.968121') LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:7
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE (inicio > '2025-10-02 11:46:07.968121') ORDER BY "consultas"."inicio" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:9
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 4 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mMedico Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:27
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 5 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:29
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 2 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 3 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mPaciente Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "pacientes" WHERE "pacientes"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:51
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 ORDER BY "pacientes"."nome" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:53
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 22.8ms | GC: 0.7ms)
+  Rendered layout layouts/application.html.erb (Duration: 24.7ms | GC: 0.7ms)
+Completed 200 OK in 41ms (Views: 24.9ms | ActiveRecord: 1.4ms (18 queries, 2 cached) | GC: 1.5ms)
+
+
+Started GET "/consultas" for 127.0.0.1 at 2025-10-02 07:46:14 -0400
+Processing by ConsultasController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/index.html.erb within layouts/application
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" ORDER BY "consultas"."inicio" DESC LIMIT 50 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:17
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 4 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  Rendered consultas/index.html.erb within layouts/application (Duration: 16.3ms | GC: 0.7ms)
+  Rendered layout layouts/application.html.erb (Duration: 19.0ms | GC: 0.7ms)
+Completed 200 OK in 35ms (Views: 20.3ms | ActiveRecord: 1.0ms (14 queries, 5 cached) | GC: 0.7ms)
+
+
+Started GET "/consultas" for 127.0.0.1 at 2025-10-02 07:46:18 -0400
+Processing by ConsultasController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/index.html.erb within layouts/application
+  [1m[36mConsulta Load (0.2ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" ORDER BY "consultas"."inicio" DESC LIMIT 50 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:17
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.2ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mUnidade Load (0.2ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 4 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  Rendered consultas/index.html.erb within layouts/application (Duration: 16.9ms | GC: 0.9ms)
+  Rendered layout layouts/application.html.erb (Duration: 18.1ms | GC: 0.9ms)
+Completed 200 OK in 32ms (Views: 17.7ms | ActiveRecord: 1.1ms (14 queries, 5 cached) | GC: 0.9ms)
+
+
+Started GET "/consultas/new" for 127.0.0.1 at 2025-10-02 07:46:18 -0400
+Processing by ConsultasController#new as HTML
+  [1m[36mUsuario Load (0.4ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/new.html.erb within layouts/application
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:10
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:16
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:21
+  [1m[36mSala Load (0.1ms)[0m  [1m[34mSELECT "salas".* FROM "salas" WHERE "salas"."ativa" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:26
+  [1m[36mEspecialidade Load (0.1ms)[0m  [1m[34mSELECT "especialidades".* FROM "especialidades" /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:31
+  Rendered consultas/new.html.erb within layouts/application (Duration: 19.5ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 22.0ms | GC: 0.0ms)
+Completed 200 OK in 34ms (Views: 22.0ms | ActiveRecord: 0.9ms (6 queries, 0 cached) | GC: 0.3ms)
+
+
+Started POST "/consultas" for 127.0.0.1 at 2025-10-02 07:46:22 -0400
+Processing by ConsultasController#create as HTML
+  Parameters: {"authenticity_token" => "[FILTERED]", "consulta" => {"paciente_id" => "", "medico_id" => "", "unidade_id" => "", "sala_id" => "", "especialidade_id" => "", "inicio" => "2025-10-03T11:46:18", "fim" => "", "tipo" => "presencial", "status" => "marcada"}, "commit" => "Criar Consulta"}
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/new.html.erb within layouts/application
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:10
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:16
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:21
+  [1m[36mSala Load (0.1ms)[0m  [1m[34mSELECT "salas".* FROM "salas" WHERE "salas"."ativa" = 1 /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:26
+  [1m[36mEspecialidade Load (0.1ms)[0m  [1m[34mSELECT "especialidades".* FROM "especialidades" /*action='create',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:31
+  Rendered consultas/new.html.erb within layouts/application (Duration: 16.7ms | GC: 2.2ms)
+  Rendered layout layouts/application.html.erb (Duration: 18.9ms | GC: 2.2ms)
+Completed 422 Unprocessable Content in 41ms (Views: 18.8ms | ActiveRecord: 0.6ms (6 queries, 0 cached) | GC: 2.2ms)
+
+
+Started GET "/consultas" for 127.0.0.1 at 2025-10-02 07:46:22 -0400
+Processing by ConsultasController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/index.html.erb within layouts/application
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" ORDER BY "consultas"."inicio" DESC LIMIT 50 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:17
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 4 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  Rendered consultas/index.html.erb within layouts/application (Duration: 11.6ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 12.5ms | GC: 0.0ms)
+Completed 200 OK in 27ms (Views: 12.1ms | ActiveRecord: 0.8ms (14 queries, 5 cached) | GC: 0.0ms)
+
+
+Started GET "/consultas/new" for 127.0.0.1 at 2025-10-02 08:40:06 -0400
+  [1m[36mActiveRecord::SchemaMigration Load (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HOcalendar'*/[0m
+Processing by ConsultasController#new as HTML
+Redirected to http://127.0.0.1:3000/login
+Filter chain halted as :authenticate_usuario! rendered or redirected
+Completed 302 Found in 15ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/login" for 127.0.0.1 at 2025-10-02 08:40:06 -0400
+Processing by SessionsController#new as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering sessions/new.html.erb within layouts/application
+  Rendered sessions/new.html.erb within layouts/application (Duration: 5.9ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 23.6ms | GC: 0.0ms)
+Completed 200 OK in 56ms (Views: 31.8ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started POST "/login" for 127.0.0.1 at 2025-10-02 08:40:09 -0400
+Processing by SessionsController#create as HTML
+  Parameters: {"authenticity_token" => "[FILTERED]", "username" => "admin", "password" => "[FILTERED]"}
+  [1m[36mUsuario Load (0.2ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."username" = 'admin' LIMIT 1 /*action='create',application='HOcalendar',controller='sessions'*/[0m
+  ↳ app/controllers/sessions_controller.rb:7:in 'SessionsController#create'
+Redirected to http://127.0.0.1:3000/
+Completed 302 Found in 391ms (ActiveRecord: 4.0ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-10-02 08:40:09 -0400
+Processing by DashboardController#index as HTML
+  [1m[36mUsuario Load (5.6ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mConsulta Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "consultas" WHERE (inicio > '2025-10-02 12:40:09.604006') LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:7
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE (inicio > '2025-10-02 12:40:09.604006') ORDER BY "consultas"."inicio" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:9
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 4 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.8ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (2.5ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mCACHE Medico Load (0.7ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mCACHE Medico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mMedico Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:27
+  [1m[36mMedico Load (0.5ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 5 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:29
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 2 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 3 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mPaciente Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "pacientes" WHERE "pacientes"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:51
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 ORDER BY "pacientes"."nome" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:53
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 246.5ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 256.7ms | GC: 0.0ms)
+Completed 200 OK in 366ms (Views: 254.0ms | ActiveRecord: 12.0ms (18 queries, 2 cached) | GC: 0.0ms)
+
+
+Started GET "/consultas/new" for 127.0.0.1 at 2025-10-02 08:41:07 -0400
+Processing by ConsultasController#new as HTML
+  [1m[36mUsuario Load (0.9ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/new.html.erb within layouts/application
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:10
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:16
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:21
+  [1m[36mSala Load (0.1ms)[0m  [1m[34mSELECT "salas".* FROM "salas" WHERE "salas"."ativa" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:26
+  [1m[36mEspecialidade Load (0.1ms)[0m  [1m[34mSELECT "especialidades".* FROM "especialidades" /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:31
+  Rendered consultas/new.html.erb within layouts/application (Duration: 63.0ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 64.5ms | GC: 0.0ms)
+Completed 200 OK in 128ms (Views: 64.2ms | ActiveRecord: 2.1ms (6 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/consultas" for 127.0.0.1 at 2025-10-02 08:41:23 -0400
+Processing by ConsultasController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/index.html.erb within layouts/application
+  [1m[36mConsulta Load (0.2ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" ORDER BY "consultas"."inicio" DESC LIMIT 50 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:17
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 4 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  Rendered consultas/index.html.erb within layouts/application (Duration: 84.9ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 87.8ms | GC: 0.0ms)
+Completed 200 OK in 112ms (Views: 87.1ms | ActiveRecord: 1.3ms (14 queries, 5 cached) | GC: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-10-02 08:41:24 -0400
+Processing by DashboardController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mConsulta Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "consultas" WHERE (inicio > '2025-10-02 12:41:24.932792') LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:7
+  [1m[36mConsulta Load (0.2ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE (inicio > '2025-10-02 12:41:24.932792') ORDER BY "consultas"."inicio" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:9
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 4 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mMedico Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:27
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 5 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:29
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 2 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 3 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mPaciente Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "pacientes" WHERE "pacientes"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:51
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 ORDER BY "pacientes"."nome" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:53
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 101.9ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 113.2ms | GC: 0.0ms)
+Completed 200 OK in 140ms (Views: 118.3ms | ActiveRecord: 1.6ms (18 queries, 2 cached) | GC: 0.0ms)
+
+
+Started GET "/consultas/new" for 127.0.0.1 at 2025-10-02 08:42:41 -0400
+Processing by ConsultasController#new as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/new.html.erb within layouts/application
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:10
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:16
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:21
+  [1m[36mSala Load (0.1ms)[0m  [1m[34mSELECT "salas".* FROM "salas" WHERE "salas"."ativa" = 1 /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:26
+  [1m[36mEspecialidade Load (0.1ms)[0m  [1m[34mSELECT "especialidades".* FROM "especialidades" /*action='new',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/new.html.erb:31
+  Rendered consultas/new.html.erb within layouts/application (Duration: 34.2ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 41.8ms | GC: 0.0ms)
+Completed 200 OK in 58ms (Views: 42.3ms | ActiveRecord: 0.7ms (6 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/consultas" for 127.0.0.1 at 2025-10-02 08:42:48 -0400
+Processing by ConsultasController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/index.html.erb within layouts/application
+  [1m[36mConsulta Load (0.2ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" ORDER BY "consultas"."inicio" DESC LIMIT 50 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:17
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 4 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  Rendered consultas/index.html.erb within layouts/application (Duration: 43.3ms | GC: 0.8ms)
+  Rendered layout layouts/application.html.erb (Duration: 44.7ms | GC: 0.8ms)
+Completed 200 OK in 56ms (Views: 44.7ms | ActiveRecord: 1.0ms (14 queries, 5 cached) | GC: 0.8ms)
+
+
+Started GET "/consultas/3" for 127.0.0.1 at 2025-10-02 08:42:55 -0400
+Processing by ConsultasController#show as HTML
+  Parameters: {"id" => "3"}
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='show',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  [1m[36mConsulta Load (0.2ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE "consultas"."id" = 3 LIMIT 1 /*action='show',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/consultas_controller.rb:24:in 'ConsultasController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/show.html.erb within layouts/application
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='show',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/show.html.erb:3
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='show',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/show.html.erb:4
+  Rendered consultas/show.html.erb within layouts/application (Duration: 4.8ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 8.7ms | GC: 0.9ms)
+Completed 200 OK in 38ms (Views: 13.8ms | ActiveRecord: 0.5ms (4 queries, 0 cached) | GC: 0.9ms)
+
+
+Started GET "/consultas" for 127.0.0.1 at 2025-10-02 08:43:00 -0400
+Processing by ConsultasController#index as HTML
+  [1m[36mUsuario Load (0.1ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering consultas/index.html.erb within layouts/application
+  [1m[36mConsulta Load (0.1ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" ORDER BY "consultas"."inicio" DESC LIMIT 50 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:17
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mUnidade Load (0.1ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 4 LIMIT 1 /*action='index',application='HOcalendar',controller='consultas'*/[0m
+  ↳ app/views/consultas/index.html.erb:20
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:21
+  [1m[36mCACHE Unidade Load (0.0ms)[0m  [1m[34mSELECT "unidades".* FROM "unidades" WHERE "unidades"."id" = 1 LIMIT 1[0m
+  ↳ app/views/consultas/index.html.erb:22
+  Rendered consultas/index.html.erb within layouts/application (Duration: 14.4ms | GC: 0.9ms)
+  Rendered layout layouts/application.html.erb (Duration: 15.6ms | GC: 0.9ms)
+Completed 200 OK in 28ms (Views: 16.1ms | ActiveRecord: 0.9ms (14 queries, 5 cached) | GC: 0.9ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-10-02 08:44:09 -0400
+Processing by DashboardController#index as HTML
+  [1m[36mUsuario Load (0.2ms)[0m  [1m[34mSELECT "usuarios".* FROM "usuarios" WHERE "usuarios"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/controllers/application_controller.rb:11:in 'ApplicationController#current_usuario'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mConsulta Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "consultas" WHERE (inicio > '2025-10-02 12:44:09.109717') LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:7
+  [1m[36mConsulta Load (0.2ms)[0m  [1m[34mSELECT "consultas".* FROM "consultas" WHERE (inicio > '2025-10-02 12:44:09.109717') ORDER BY "consultas"."inicio" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:9
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 4 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.1ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 3 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."id" = 2 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:12
+  [1m[36mCACHE Medico Load (0.0ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."id" = 1 LIMIT 1[0m
+  ↳ app/views/dashboard/index.html.erb:13
+  [1m[36mMedico Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:27
+  [1m[36mMedico Load (0.1ms)[0m  [1m[34mSELECT "medicos".* FROM "medicos" WHERE "medicos"."ativo" = 1 LIMIT 5 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:29
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 2 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mEspecialidade Pluck (0.1ms)[0m  [1m[34mSELECT "especialidades"."nome" FROM "especialidades" INNER JOIN "medico_especialidades" ON "especialidades"."id" = "medico_especialidades"."especialidade_id" WHERE "medico_especialidades"."medico_id" = 3 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:30
+  [1m[36mPaciente Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "pacientes" WHERE "pacientes"."ativo" = 1 LIMIT 1 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:51
+  [1m[36mPaciente Load (0.2ms)[0m  [1m[34mSELECT "pacientes".* FROM "pacientes" WHERE "pacientes"."ativo" = 1 ORDER BY "pacientes"."nome" ASC LIMIT 10 /*action='index',application='HOcalendar',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:53
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 30.1ms | GC: 1.2ms)
+  Rendered layout layouts/application.html.erb (Duration: 32.3ms | GC: 1.2ms)
+Completed 200 OK in 51ms (Views: 31.7ms | ActiveRecord: 1.9ms (18 queries, 2 cached) | GC: 1.2ms)
+
+

@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  entidade: MyString
+  id_registro: 1
+  acao: MyString
+  realizado_por: 1
+  realizado_em: 2025-10-02 07:10:57
+  diffs: MyText
+
+two:
+  entidade: MyString
+  id_registro: 1
+  acao: MyString
+  realizado_por: 1
+  realizado_em: 2025-10-02 07:10:57
+  diffs: MyText

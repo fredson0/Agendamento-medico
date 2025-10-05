@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  agenda: one
+  inicio: 2025-10-02 07:10:08
+  fim: 2025-10-02 07:10:08
+  motivo: MyString
+
+two:
+  agenda: two
+  inicio: 2025-10-02 07:10:08
+  fim: 2025-10-02 07:10:08
+  motivo: MyString

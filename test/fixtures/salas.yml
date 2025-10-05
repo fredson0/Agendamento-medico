@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  unidade: one
+  nome: MyString
+  recursos: MyString
+  ativa: false
+
+two:
+  unidade: two
+  nome: MyString
+  recursos: MyString
+  ativa: false

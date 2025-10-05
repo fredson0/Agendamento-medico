@@ -1,0 +1,59 @@
+<h1>Nova Consulta</h1>
+
+<%= form_with model: @consulta, url: consultas_path, local: true do |f| %>
+	<div>
+		<label>Paciente</label><br>
+		<% if usuario_signed_in? && current_usuario.papel == 'paciente' %>
+		  <%= f.hidden_field :paciente_id, value: current_usuario.paciente&.id %>
+		  <p><strong><%= current_usuario.paciente&.nome %></strong></p>
+		<% else %>
+		  <%= f.collection_select :paciente_id, @pacientes, :id, :nome, prompt: 'Selecione' %>
+		<% end %>
+	</div>
+
+	<div>
+		<label>Médico</label><br>
+		<%= f.collection_select :medico_id, @medicos, :id, :nome, prompt: 'Selecione' %>
+	</div>
+
+	<div>
+		<label>Unidade</label><br>
+		<%= f.collection_select :unidade_id, @unidades, :id, :nome, prompt: 'Selecione' %>
+	</div>
+
+	<div>
+		<label>Sala (opcional)</label><br>
+		<%= f.collection_select :sala_id, @salas, :id, :nome, include_blank: true %>
+	</div>
+
+	<div>
+		<label>Especialidade (opcional)</label><br>
+		<%= f.collection_select :especialidade_id, @especialidades, :id, :nome, include_blank: true %>
+	</div>
+
+	<div>
+		<label>Início</label><br>
+		<%= f.datetime_field :inicio, value: (@consulta.inicio || 1.day.from_now) %>
+	</div>
+
+	<div>
+		<label>Fim</label><br>
+		<%= f.datetime_field :fim %>
+	</div>
+
+	<div>
+		<label>Tipo</label><br>
+		<%= f.select :tipo, [['Presencial','presencial'],['Teleconsulta','teleconsulta']], prompt: 'Selecione' %>
+	</div>
+
+	<div>
+		<label>Status</label><br>
+		<%= f.select :status, [['Marcada','marcada'],['Confirmada','confirmada'],['Cancelada','cancelada']], prompt: 'Selecione' %>
+	</div>
+
+	<div style="margin-top:10px;">
+		<%= f.submit 'Criar Consulta' %>
+	</div>
+<% end %>
+
+<%= link_to 'Voltar', consultas_path %>
