@@ -1,0 +1,2 @@
+---
+BUNDLE_BUILD__SQLITE3: "--with-sqlite3-dir=C:/msys64/ucrt64"

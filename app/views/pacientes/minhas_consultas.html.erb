@@ -1,0 +1,32 @@
+<h1>Minhas Consultas</h1>
+
+<p>Olá, <strong><%= @paciente.nome %></strong></p>
+
+<p><%= link_to 'Agendar nova consulta', new_consulta_path %></p>
+
+<% if @consultas.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>Início</th>
+        <th>Médico</th>
+        <th>Unidade</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @consultas.each do |c| %>
+        <tr>
+          <td><%= l c.inicio, format: :short %></td>
+          <td><%= c.medico&.nome %></td>
+          <td><%= c.unidade&.nome %></td>
+          <td><%= c.status %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>Você não tem consultas agendadas.</p>
+<% end %>
+
+<%= link_to 'Voltar', root_path %>

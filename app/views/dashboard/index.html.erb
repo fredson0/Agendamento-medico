@@ -1,0 +1,63 @@
+<h1>Dashboard</h1>
+
+<div class="dashboard-grid">
+
+	<section class="panel">
+		<h2>Próximas Consultas</h2>
+		<% if @consultas_proximas.any? %>
+			<ul>
+				<% @consultas_proximas.each do |c| %>
+					<li>
+						<strong><%= l c.inicio, format: :short %></strong>
+						- <%= c.paciente&.nome || '---' %>
+						com <%= c.medico&.nome || '---' %>
+						<% if current_usuario.papel == 'medico' %>
+							(<%= c.situacao || c.status %>)
+						<% end %>
+					</li>
+				<% end %>
+			</ul>
+		<% else %>
+			<p>Nenhuma consulta agendada.</p>
+		<% end %>
+	</section>
+
+	<section class="panel">
+		<h2>Médicos (ativos)</h2>
+		<% if @medicos.any? %>
+			<ul>
+				<% @medicos.each do |m| %>
+					<li><%= m.nome %> - <%= m.especialidades.pluck(:nome).join(', ') %></li>
+				<% end %>
+			</ul>
+		<% else %>
+			<p>Nenhum médico cadastrado.</p>
+		<% end %>
+	</section>
+
+	<% if current_usuario.papel == 'paciente' && @paciente %>
+		<section class="panel">
+			<h2>Seus Dados</h2>
+			<p><strong>Nome:</strong> <%= @paciente.nome %></p>
+			<p><strong>CPF:</strong> <%= @paciente.cpf %></p>
+			<p><strong>Email:</strong> <%= @paciente.email.presence || '---' %></p>
+			<p><strong>Telefone:</strong> <%= @paciente.telefone.presence || '---' %></p>
+		</section>
+	<% end %>
+
+	<% if (current_usuario.papel == 'admin' || current_usuario.papel == 'atendente') && @pacientes %>
+		<section class="panel">
+			<h2>Pacientes</h2>
+			<% if @pacientes.any? %>
+				<ul>
+					<% @pacientes.each do |p| %>
+						<li><%= p.nome %> - <%= p.cpf %></li>
+					<% end %>
+				</ul>
+			<% else %>
+				<p>Nenhum paciente ativo.</p>
+			<% end %>
+		</section>
+	<% end %>
+
+</div>

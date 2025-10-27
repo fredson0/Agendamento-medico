@@ -1,0 +1,28 @@
+<h1>Consultas</h1>
+
+<%= link_to 'Nova Consulta', new_consulta_path %>
+
+<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;margin-top:12px;width:100%;">
+	<thead>
+		<tr>
+			<th>Início</th>
+			<th>Paciente</th>
+			<th>Médico</th>
+			<th>Unidade</th>
+			<th>Status</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		<% @consultas.each do |c| %>
+			<tr>
+				<td><%= l c.inicio, format: :short %></td>
+				<td><%= c.paciente.nome %></td>
+				<td><%= c.medico.nome %></td>
+				<td><%= c.unidade.nome %></td>
+				<td><%= c.status %></td>
+				<td><%= link_to 'Ver', consulta_path(c) %></td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>

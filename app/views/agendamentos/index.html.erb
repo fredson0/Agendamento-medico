@@ -1,0 +1,39 @@
+<% content_for :title, "Agendar Consulta" %>
+
+<div class="agendamento-container">
+  <h1>Agendar Nova Consulta</h1>
+  
+  <div class="agendamento-steps">
+    <div class="step active">1. Especialidade</div>
+    <div class="step">2. Médico</div>
+    <div class="step">3. Data/Hora</div>
+    <div class="step">4. Confirmar</div>
+  </div>
+
+  <div class="agendamento-content">
+    <h2>Escolha a Especialidade</h2>
+    
+    <div class="especialidades-grid">
+      <% if @especialidades.any? %>
+        <% @especialidades.each do |especialidade| %>
+          <%= link_to agendamento_medicos_path(especialidade_id: especialidade.id), 
+                      class: "especialidade-card" do %>
+            <div class="especialidade-icon">
+              <i class="fas fa-stethoscope"></i>
+            </div>
+            <h3><%= especialidade.nome %></h3>
+            <p><%= especialidade.descricao if especialidade.respond_to?(:descricao) %></p>
+            <div class="medicos-count">
+              <%= pluralize(especialidade.medicos.where(ativo: true).count, 'médico') %> disponível
+            </div>
+          <% end %>
+        <% end %>
+      <% else %>
+        <div class="no-especialidades">
+          <p>Não há especialidades disponíveis no momento.</p>
+          <p>Entre em contato com a clínica para mais informações.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

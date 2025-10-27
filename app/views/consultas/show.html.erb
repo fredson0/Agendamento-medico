@@ -1,0 +1,11 @@
+<h1>Consulta</h1>
+
+<p><strong>Paciente:</strong> <%= @consulta.paciente.nome %></p>
+<p><strong>Médico:</strong> <%= @consulta.medico.nome %></p>
+<p><strong>Início:</strong> <%= l @consulta.inicio, format: :short %></p>
+<p><strong>Fim:</strong> <%= l @consulta.fim, format: :short %></p>
+<p><strong>Tipo:</strong> <%= @consulta.tipo %></p>
+<p><strong>Status:</strong> <%= @consulta.status %></p>
+<p><strong>Observações:</strong> <%= @consulta.observacoes %></p>
+
+<%= link_to 'Voltar', consultas_path %>

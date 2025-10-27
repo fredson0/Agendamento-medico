@@ -1,0 +1,57 @@
+<% content_for :title, "Confirmar Agendamento" %>
+
+<div class="agendamento-container">
+  <h1>Agendar Nova Consulta</h1>
+  
+  <div class="agendamento-steps">
+    <div class="step completed">1. Especialidade</div>
+    <div class="step completed">2. Médico</div>
+    <div class="step completed">3. Data/Hora</div>
+    <div class="step active">4. Confirmar</div>
+  </div>
+
+  <div class="agendamento-content">
+    <h2>Confirmar Agendamento</h2>
+    
+    <div class="resumo-agendamento">
+      <div class="resumo-item">
+        <label>Paciente:</label>
+        <span><%= current_usuario.paciente&.nome %></span>
+      </div>
+      
+      <div class="resumo-item">
+        <label>Especialidade:</label>
+        <span><!-- Nome da especialidade --></span>
+      </div>
+      
+      <div class="resumo-item">
+        <label>Médico:</label>
+        <span><!-- Nome do médico --></span>
+      </div>
+      
+      <div class="resumo-item">
+        <label>Data:</label>
+        <span><!-- Data selecionada --></span>
+      </div>
+      
+      <div class="resumo-item">
+        <label>Horário:</label>
+        <span><!-- Horário selecionado --></span>
+      </div>
+      
+      <div class="resumo-item">
+        <label>Tipo:</label>
+        <span><!-- Presencial ou Teleconsulta --></span>
+      </div>
+    </div>
+    
+    <%= form_with url: agendamentos_path, method: :post, local: true, class: "agendamento-form" do |f| %>
+      <!-- Campos hidden com os dados selecionados -->
+      
+      <div class="agendamento-actions">
+        <%= link_to "← Voltar", "#", class: "btn btn-secondary" %>
+        <%= f.submit "Confirmar Agendamento", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

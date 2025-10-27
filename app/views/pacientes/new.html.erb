@@ -1,0 +1,45 @@
+<h1>Cadastro de Paciente</h1>
+
+<%= form_with url: registrar_path, local: true do |f| %>
+  <fieldset>
+    <legend>Dados do usuário</legend>
+    <div>
+      <label>Username</label><br>
+      <%= text_field_tag 'usuario[username]', @usuario.username %>
+    </div>
+    <div>
+      <label>Senha</label><br>
+      <%= password_field_tag 'usuario[password]' %>
+    </div>
+    <div>
+      <label>Confirme a senha</label><br>
+      <%= password_field_tag 'usuario[password_confirmation]' %>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Dados do paciente</legend>
+    <div>
+      <label>Nome</label><br>
+      <%= text_field_tag 'paciente[nome]', @paciente.nome %>
+    </div>
+    <div>
+      <label>CPF</label><br>
+      <%= text_field_tag 'paciente[cpf]', @paciente.cpf %>
+    </div>
+    <div>
+      <label>Email</label><br>
+      <%= email_field_tag 'paciente[email]', @paciente.email %>
+    </div>
+    <div>
+      <label>Telefone</label><br>
+      <%= text_field_tag 'paciente[telefone]', @paciente.telefone %>
+    </div>
+  </fieldset>
+
+  <div style="margin-top:10px;">
+    <%= submit_tag 'Registrar' %>
+  </div>
+<% end %>
+
+<%= link_to 'Voltar', root_path %>
