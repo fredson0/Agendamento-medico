@@ -44,7 +44,7 @@
             <% if current_usuario.papel == 'admin' %>
               <%= link_to 'Admin: Médicos', '#' %>
             <% end %>
-            <%= link_to 'Sair', logout_path, method: :delete %>
+            <%= link_to 'Sair', logout_path, data: { method: :delete } %>
           <% else %>
             <%= link_to 'Login', login_path %>
           <% end %>

@@ -76,31 +76,64 @@ class AgendamentosController < ApplicationController
   end
 
   def create
-    # Buscar dados novamente
+    # Buscar dados recebidos do formulário
     especialidade = Especialidade.find(params[:especialidade_id])
     medico = Medico.find(params[:medico_id])
     horario = Horario.find(params[:horario_id])
     
-    # Criar a consulta
+    # Verificar se o horário ainda está disponível
+    unless horario.status == 'disponivel'
+      redirect_to agendamento_path, alert: 'Horário não está mais disponível.'
+      return
+    end
+    
+    # Verificar se o paciente existe
+    paciente = current_usuario.paciente
+    unless paciente
+      redirect_to agendamento_path, alert: 'Paciente não encontrado.'
+      return
+    end
+    
+    # Criar a consulta seguindo o padrão do sistema
     consulta = Consulta.new(
-      paciente: current_usuario.paciente,
+      paciente: paciente,
       medico: medico,
+      unidade: medico.agendas.first&.unidade || Unidade.first,
       especialidade: especialidade,
       inicio: horario.inicio,
       fim: horario.fim,
       tipo: 'presencial',
       status: 'marcada',
-      origem: 'app'
-    )
-    
+      origem: 'app',
+      observacoes: 'Agendamento realizado pelo paciente via sistema'
+    )    
+    # Tentar salvar a consulta
     if consulta.save
-      # Marcar horário como ocupado
-      horario.update(status: 'ocupado')
+      # Marcar horário como reservado
+      horario.update!(status: 'reservado')
+      
+      # Registrar auditoria da criação
+      Auditoria.create!(
+        acao: 'CREATE',
+        entidade: 'consultas',
+        id_registro: consulta.id,
+        realizado_por: current_usuario.id,
+        realizado_em: Time.current,
+        diffs: { created: consulta.attributes }
+      )
       
       redirect_to root_path, notice: 'Consulta agendada com sucesso!'
     else
-      redirect_to agendamento_path, alert: 'Erro ao agendar consulta.'
+      # Em caso de erro, mostrar detalhes e manter disponibilidade do horário
+      error_messages = consulta.errors.full_messages.join(', ')
+      Rails.logger.error "Erro ao salvar consulta: #{error_messages}"
+      redirect_to agendamento_path, alert: "Erro ao agendar consulta: #{error_messages}"
     end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to agendamento_path, alert: 'Dados inválidos para agendamento.'
+  rescue StandardError => e
+    Rails.logger.error "Erro ao criar consulta: #{e.message}"
+    redirect_to agendamento_path, alert: 'Erro interno. Tente novamente.'
   end
 
   private
@@ -113,7 +146,7 @@ class AgendamentosController < ApplicationController
 
   def agendamento_params
     # Parâmetros permitidos para o agendamento
-    params.require(:agendamento).permit(:especialidade_id, :medico_id, :data, :horario, :tipo)
+    params.permit(:especialidade_id, :medico_id, :data, :horario_id, :tipo)
   end
 
   def buscar_horarios_disponiveis(agenda, data)

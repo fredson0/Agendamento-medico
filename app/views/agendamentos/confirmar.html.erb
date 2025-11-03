@@ -13,44 +13,69 @@
   <div class="agendamento-content">
     <h2>Confirmar Agendamento</h2>
     
-    <div class="resumo-agendamento">
-      <div class="resumo-item">
-        <label>Paciente:</label>
-        <span><%= current_usuario.paciente&.nome %></span>
+    <% if @especialidade && @medico && @horario && @data_consulta %>
+      <div class="resumo-agendamento">
+        <div class="resumo-item">
+          <label>Paciente:</label>
+          <span><%= current_usuario.paciente&.nome %></span>
+        </div>
+        
+        <div class="resumo-item">
+          <label>Especialidade:</label>
+          <span><%= @especialidade.nome %></span>
+        </div>
+        
+        <div class="resumo-item">
+          <label>Médico:</label>
+          <span>Dr. <%= @medico.nome %></span>
+        </div>
+        
+        <div class="resumo-item">
+          <label>Data:</label>
+          <span><%= @data_consulta.strftime("%d/%m/%Y") %></span>
+        </div>
+        
+        <div class="resumo-item">
+          <label>Horário:</label>
+          <span><%= @horario.inicio.strftime("%H:%M") %> às <%= @horario.fim.strftime("%H:%M") %></span>
+        </div>
+        
+        <div class="resumo-item">
+          <label>Duração:</label>
+          <span><%= @duracao_minutos.to_i %> minutos</span>
+        </div>
+        
+        <div class="resumo-item">
+          <label>Tipo:</label>
+          <span>Presencial</span>
+        </div>
+        
+        <div class="resumo-item">
+          <label>Valor:</label>
+          <span>R$ <%= number_with_precision(@preco_consulta, precision: 2, delimiter: '.', separator: ',') %></span>
+        </div>
       </div>
       
-      <div class="resumo-item">
-        <label>Especialidade:</label>
-        <span><!-- Nome da especialidade --></span>
-      </div>
-      
-      <div class="resumo-item">
-        <label>Médico:</label>
-        <span><!-- Nome do médico --></span>
-      </div>
-      
-      <div class="resumo-item">
-        <label>Data:</label>
-        <span><!-- Data selecionada --></span>
-      </div>
-      
-      <div class="resumo-item">
-        <label>Horário:</label>
-        <span><!-- Horário selecionado --></span>
-      </div>
-      
-      <div class="resumo-item">
-        <label>Tipo:</label>
-        <span><!-- Presencial ou Teleconsulta --></span>
-      </div>
-    </div>
-    
-    <%= form_with url: agendamentos_path, method: :post, local: true, class: "agendamento-form" do |f| %>
-      <!-- Campos hidden com os dados selecionados -->
-      
-      <div class="agendamento-actions">
-        <%= link_to "← Voltar", "#", class: "btn btn-secondary" %>
-        <%= f.submit "Confirmar Agendamento", class: "btn btn-primary" %>
+      <%= form_with url: agendamentos_path, method: :post, local: true, class: "agendamento-form" do |f| %>
+        <!-- Campos hidden com os dados selecionados -->
+        <%= f.hidden_field :especialidade_id, value: @especialidade_id %>
+        <%= f.hidden_field :medico_id, value: @medico_id %>
+        <%= f.hidden_field :data, value: @data %>
+        <%= f.hidden_field :horario_id, value: @horario_id %>
+        
+        <div class="agendamento-actions">
+          <%= link_to "← Voltar", agendamento_horarios_path(
+                especialidade_id: @especialidade_id,
+                medico_id: @medico_id,
+                data: @data
+              ), class: "btn btn-secondary" %>
+          <%= f.submit "Confirmar Agendamento", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="erro-dados">
+        <p>Dados incompletos para confirmação.</p>
+        <%= link_to "Reiniciar Agendamento", agendamento_path, class: "btn btn-primary" %>
       </div>
     <% end %>
   </div>
