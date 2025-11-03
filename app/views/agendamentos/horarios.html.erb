@@ -1,0 +1,72 @@
+<% content_for :title, "Escolher Horário" %>
+
+<div class="agendamento-container">
+  <h1>Agendar Nova Consulta</h1>
+  
+  <div class="agendamento-steps">
+    <div class="step completed">1. Especialidade</div>
+    <div class="step completed">2. Médico</div>
+    <div class="step active">3. Data/Hora</div>
+    <div class="step">4. Confirmar</div>
+  </div>
+
+  <div class="agendamento-content">
+    <h2>Escolha Data e Horário</h2>
+    
+    <% if @medico && @especialidade %>
+      <div class="medico-selecionado">
+        <p><strong>Médico:</strong> Dr. <%= @medico.nome %></p>
+        <p><strong>Especialidade:</strong> <%= @especialidade.nome %></p>
+      </div>
+    <% end %>
+    
+    <div class="calendario-container">
+      <h3>Selecione a Data</h3>
+      <div class="data-selector">
+        <% 7.times do |i| %>
+          <% data = Date.today + i.days %>
+          <% data_str = data.strftime("%Y-%m-%d") %>
+          <% ativa = @data_selecionada == data ? 'active' : '' %>
+          <%= link_to agendamento_horarios_path(
+                especialidade_id: @especialidade_id, 
+                medico_id: @medico_id, 
+                data: data_str
+              ), 
+              class: "data-card #{ativa}" do %>
+            <div class="data-dia"><%= data.strftime("%d") %></div>
+            <div class="data-mes"><%= data.strftime("%b").upcase %></div>
+            <div class="data-semana"><%= data.strftime("%a").upcase %></div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+    
+    <div class="horarios-container">
+      <h3>Horários Disponíveis - <%= @data_selecionada.strftime("%d/%m/%Y") %></h3>
+      <div class="horarios-grid">
+        <% if @horarios_disponiveis.any? %>
+          <% @horarios_disponiveis.each do |horario| %>
+            <%= link_to agendamento_confirmar_path(
+                  especialidade_id: @especialidade_id,
+                  medico_id: @medico_id,
+                  data: @data_selecionada.strftime("%Y-%m-%d"),
+                  horario_id: horario.id
+                ), 
+                class: "horario-slot" do %>
+              <%= horario.inicio.strftime("%H:%M") %>
+            <% end %>
+          <% end %>
+        <% else %>
+          <div class="no-horarios">
+            <p>Não há horários disponíveis para esta data.</p>
+            <p>Tente selecionar outra data.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    
+    <div class="agendamento-actions">
+      <%= link_to "← Voltar", agendamento_medicos_path(especialidade_id: @especialidade_id), class: "btn btn-secondary" %>
+    </div>
+  </div>
+</div>

@@ -34,11 +34,12 @@
             <%= link_to 'Consultas', consultas_path %>
             <% if current_usuario.papel == 'admin' || current_usuario.papel == 'atendente' %>
               <%= link_to 'Nova Consulta', new_consulta_path %>
+              <%= link_to 'Agendamentos', agendamentos_path %>
             <% end %>
             <% if current_usuario.papel == 'admin' %>
               <%= link_to 'Admin: Médicos', '#' %>
             <% end %>
-            <%= link_to 'Sair', logout_path, method: :delete %>
+            <%= link_to 'Sair', logout_path, data: { method: :delete } %>
           <% else %>
             <%= link_to 'Login', login_path %>
           <% end %>

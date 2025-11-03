@@ -27,4 +27,14 @@ Rails.application.routes.draw do
 
   # dashboard via root
   resources :consultas, only: [:index, :show, :new, :create]
+  
+  # Sistema de agendamento de consultas
+  resources :agendamentos, only: [:index] do
+    collection do
+      get :medicos
+      get :horarios
+      get :confirmar
+      post :create
+    end
+  end
 end

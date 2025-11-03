@@ -1,0 +1,53 @@
+<% content_for :title, "Escolher Médico" %>
+
+<div class="agendamento-container">
+  <h1>Agendar Nova Consulta</h1>
+  
+  <div class="agendamento-steps">
+    <div class="step completed">1. Especialidade</div>
+    <div class="step active">2. Médico</div>
+    <div class="step">3. Data/Hora</div>
+    <div class="step">4. Confirmar</div>
+  </div>
+
+  <div class="agendamento-content">
+    <h2>Escolha o Médico</h2>
+    <% if @especialidade %>
+      <p class="especialidade-selecionada">
+        Especialidade: <strong><%= @especialidade.nome %></strong>
+      </p>
+    <% end %>
+    
+    <div class="medicos-lista">
+      <% if @medicos&.any? %>
+        <% @medicos.each do |medico| %>
+          <%= link_to agendamento_horarios_path(especialidade_id: @especialidade_id, medico_id: medico.id), 
+                      class: "medico-card" do %>
+            <div class="medico-header">
+              <h3>Dr. <%= medico.nome %></h3>
+              <p class="medico-crm">CRM: <%= medico.crm %></p>
+            </div>
+            <div class="medico-info">
+              <p><strong>Telefone:</strong> <%= medico.telefone %></p>
+              <p><strong>Email:</strong> <%= medico.email %></p>
+            </div>
+            <div class="medico-especialidades">
+              <% medico.especialidades.each do |esp| %>
+                <span class="especialidade-badge"><%= esp.nome %></span>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+      <% else %>
+        <div class="no-medicos">
+          <p>Não há médicos disponíveis para esta especialidade no momento.</p>
+          <p>Tente selecionar outra especialidade.</p>
+        </div>
+      <% end %>
+    </div>
+    
+    <div class="agendamento-actions">
+      <%= link_to "← Voltar", agendamento_path, class: "btn btn-secondary" %>
+    </div>
+  </div>
+</div>
