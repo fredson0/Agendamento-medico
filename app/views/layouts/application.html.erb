@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "H Ocalendar" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Font Awesome for icons %>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    
+    <style>
+      /* Navigation Styles */
+      header {
+        background: #fff;
+        border-bottom: 1px solid #e5e7eb;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      
+      .main-navigation {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 32px;
+      }
+      
+      .nav-user-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      
+      .nav-greeting {
+        font-size: 14px;
+        color: #1f2937;
+      }
+      
+      .nav-role {
+        font-size: 12px;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        color: #6b7280;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      
+      .nav-link:hover {
+        color: #3b82f6;
+        background: #f3f4f6;
+      }
+      
+      .nav-link.active {
+        color: #3b82f6;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+      }
+      
+      .nav-link i {
+        font-size: 16px;
+        width: 16px;
+        text-align: center;
+      }
+      
+      .nav-logout {
+        color: #ef4444 !important;
+        margin-left: 16px;
+        border-left: 1px solid #e5e7eb;
+        padding-left: 20px;
+      }
+      
+      .nav-logout:hover {
+        background: #fef2f2 !important;
+        color: #dc2626 !important;
+      }
+      
+      .logout-form {
+        margin: 0;
+        display: inline;
+      }
+      
+      .logout-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: inherit;
+      }
+      
+      @media (max-width: 768px) {
+        .main-navigation {
+          flex-direction: column;
+          gap: 16px;
+        }
+        
+        .nav-links {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+        
+        .nav-link span {
+          display: none;
+        }
+        
+        .nav-link {
+          padding: 8px;
+        }
+        
+        .nav-logout {
+          margin-left: 0;
+          border-left: none;
+          padding-left: 8px;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .nav-links {
+          grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+          gap: 4px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="container" style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;">
+        <div>
+          <a href="<%= root_path %>"><strong>HOcalendar</strong></a>
+        </div>
+        <nav class="main-navigation">
+          <% if usuario_signed_in? %>
+            <div class="nav-user-info">
+              <span class="nav-greeting">Olá, <strong><%= current_usuario.username %></strong></span>
+              <span class="nav-role"><%= papel_texto(current_usuario.papel) %></span>
+            </div>
+            
+            <div class="nav-links">
+              <%= link_to root_path, class: nav_link_class('dashboard') do %>
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+              <% end %>
+              
+              <% case current_usuario.papel %>
+              <% when 'paciente' %>
+                <%= link_to agendamento_path, class: nav_link_class('agendamento') do %>
+                  <i class="fas fa-calendar-plus"></i>
+                  <span>Agendar Consulta</span>
+                <% end %>
+                <%= link_to consultas_path, class: nav_link_class('consultas') do %>
+                  <i class="fas fa-calendar-check"></i>
+                  <span>Minhas Consultas</span>
+                <% end %>
+                <%= link_to '#', class: nav_link_class('perfil') do %>
+                  <i class="fas fa-user"></i>
+                  <span>Perfil</span>
+                <% end %>
+                <%= link_to ajuda_path, class: nav_link_class('ajuda') do %>
+                  <i class="fas fa-question-circle"></i>
+                  <span>Ajuda</span>
+                <% end %>
+                
+              <% when 'medico' %>
+                <%= link_to consultas_path, class: nav_link_class('consultas') do %>
+                  <i class="fas fa-calendar-day"></i>
+                  <span>Minha Agenda</span>
+                <% end %>
+                <%= link_to '#', class: nav_link_class('pacientes') do %>
+                  <i class="fas fa-users"></i>
+                  <span>Pacientes</span>
+                <% end %>
+                <%= link_to '#', class: nav_link_class('configuracoes') do %>
+                  <i class="fas fa-cog"></i>
+                  <span>Configurações</span>
+                <% end %>
+                
+              <% when 'admin', 'atendente' %>
+                <%= link_to new_consulta_path, class: nav_link_class('nova_consulta') do %>
+                  <i class="fas fa-plus"></i>
+                  <span>Nova Consulta</span>
+                <% end %>
+                <%= link_to consultas_path, class: nav_link_class('consultas') do %>
+                  <i class="fas fa-calendar-alt"></i>
+                  <span>Consultas</span>
+                <% end %>
+                <%= link_to '#', class: nav_link_class('pacientes') do %>
+                  <i class="fas fa-user-injured"></i>
+                  <span>Pacientes</span>
+                <% end %>
+                <%= link_to '#', class: nav_link_class('medicos') do %>
+                  <i class="fas fa-user-md"></i>
+                  <span>Médicos</span>
+                <% end %>
+                <% if current_usuario.papel == 'admin' %>
+                  <%= link_to '#', class: nav_link_class('relatorios') do %>
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Relatórios</span>
+                  <% end %>
+                <% end %>
+              <% end %>
+              
+              <%= button_to logout_path, method: :delete, class: 'nav-link nav-logout logout-btn', form_class: 'logout-form' do %>
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="nav-links">
+              <%= link_to login_path, class: 'nav-link' do %>
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Login</span>
+              <% end %>
+            </div>
+          <% end %>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <% if flash[:notice] %>
+          <div class="flash notice"><%= flash[:notice] %></div>
+        <% end %>
+        <% if flash[:alert] %>
+          <div class="flash alert"><%= flash[:alert] %></div>
+        <% end %>
+
+        <%= yield %>
+      </div>
+    </main>
+  </body>
+</html>

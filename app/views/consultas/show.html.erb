@@ -1,0 +1,416 @@
+<% content_for :title, "Detalhes da Consulta" %>
+
+<div class="page-header">
+  <div class="page-header-left">
+    <h1><i class="fas fa-calendar-check"></i> Detalhes da Consulta</h1>
+    <p class="subtitle">Informações completas da consulta médica</p>
+  </div>
+  <div class="page-header-right">
+    <%= link_to consultas_path, class: 'btn btn-outline' do %>
+      <i class="fas fa-arrow-left"></i> Voltar
+    <% end %>
+  </div>
+</div>
+
+<div class="consulta-detail-container">
+  <!-- Status e Data/Hora -->
+  <div class="detail-header">
+    <div class="detail-datetime">
+      <i class="fas fa-calendar-alt"></i>
+      <div class="datetime-info">
+        <h2><%= l @consulta.inicio.to_date, format: :long %></h2>
+        <p><%= @consulta.inicio.strftime('%H:%M') %> - <%= @consulta.fim.strftime('%H:%M') %></p>
+      </div>
+    </div>
+    <div class="detail-status">
+      <%= status_badge(@consulta.status) %>
+    </div>
+  </div>
+
+  <!-- Grid de Informações -->
+  <div class="detail-grid">
+    <!-- Paciente -->
+    <div class="detail-card">
+      <div class="card-header">
+        <i class="fas fa-user-injured"></i>
+        <h3>Paciente</h3>
+      </div>
+      <div class="card-content">
+        <div class="info-row">
+          <span class="label">Nome:</span>
+          <span class="value"><%= @consulta.paciente.nome %></span>
+        </div>
+        <% if @consulta.paciente.cpf.present? %>
+          <div class="info-row">
+            <span class="label">CPF:</span>
+            <span class="value"><%= @consulta.paciente.cpf %></span>
+          </div>
+        <% end %>
+        <% if @consulta.paciente.telefone.present? %>
+          <div class="info-row">
+            <span class="label">Telefone:</span>
+            <span class="value">
+              <a href="tel:<%= @consulta.paciente.telefone %>"><%= @consulta.paciente.telefone %></a>
+            </span>
+          </div>
+        <% end %>
+        <% if @consulta.paciente.email.present? %>
+          <div class="info-row">
+            <span class="label">Email:</span>
+            <span class="value">
+              <a href="mailto:<%= @consulta.paciente.email %>"><%= @consulta.paciente.email %></a>
+            </span>
+          </div>
+        <% end %>
+        <div class="info-row">
+          <span class="label">Idade:</span>
+          <span class="value">
+            <%= Date.current.year - @consulta.paciente.data_nascimento.year %> anos
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Médico -->
+    <div class="detail-card">
+      <div class="card-header">
+        <i class="fas fa-user-md"></i>
+        <h3>Médico</h3>
+      </div>
+      <div class="card-content">
+        <div class="info-row">
+          <span class="label">Nome:</span>
+          <span class="value"><%= @consulta.medico.nome %></span>
+        </div>
+        <div class="info-row">
+          <span class="label">CRM:</span>
+          <span class="value"><%= @consulta.medico.crm %> - <%= @consulta.medico.uf_crm %></span>
+        </div>
+        <% if @consulta.especialidade %>
+          <div class="info-row">
+            <span class="label">Especialidade:</span>
+            <span class="value"><%= @consulta.especialidade.nome %></span>
+          </div>
+        <% end %>
+        <% if @consulta.medico.telefone.present? %>
+          <div class="info-row">
+            <span class="label">Telefone:</span>
+            <span class="value">
+              <a href="tel:<%= @consulta.medico.telefone %>"><%= @consulta.medico.telefone %></a>
+            </span>
+          </div>
+        <% end %>
+        <% if @consulta.medico.email.present? %>
+          <div class="info-row">
+            <span class="label">Email:</span>
+            <span class="value">
+              <a href="mailto:<%= @consulta.medico.email %>"><%= @consulta.medico.email %></a>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Local -->
+    <div class="detail-card">
+      <div class="card-header">
+        <i class="fas fa-hospital"></i>
+        <h3>Local</h3>
+      </div>
+      <div class="card-content">
+        <div class="info-row">
+          <span class="label">Unidade:</span>
+          <span class="value"><%= @consulta.unidade.nome %></span>
+        </div>
+        <% if @consulta.sala %>
+          <div class="info-row">
+            <span class="label">Sala:</span>
+            <span class="value"><%= @consulta.sala.nome %></span>
+          </div>
+        <% end %>
+        <div class="info-row">
+          <span class="label">Tipo:</span>
+          <span class="value">
+            <%= tipo_icon(@consulta.tipo) %>
+            <%= @consulta.tipo.capitalize %>
+          </span>
+        </div>
+        <% if @consulta.unidade.endereco.present? %>
+          <div class="info-row">
+            <span class="label">Endereço:</span>
+            <span class="value"><%= @consulta.unidade.endereco %></span>
+          </div>
+        <% end %>
+        <% if @consulta.unidade.telefone.present? %>
+          <div class="info-row">
+            <span class="label">Telefone:</span>
+            <span class="value">
+              <a href="tel:<%= @consulta.unidade.telefone %>"><%= @consulta.unidade.telefone %></a>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Informações Adicionais -->
+    <div class="detail-card">
+      <div class="card-header">
+        <i class="fas fa-info-circle"></i>
+        <h3>Informações</h3>
+      </div>
+      <div class="card-content">
+        <div class="info-row">
+          <span class="label">Status:</span>
+          <span class="value"><%= status_badge(@consulta.status) %></span>
+        </div>
+        <div class="info-row">
+          <span class="label">Origem:</span>
+          <span class="value">
+            <% case @consulta.origem %>
+            <% when 'app' %>
+              <i class="fas fa-mobile-alt"></i> Aplicativo
+            <% when 'recepcao' %>
+              <i class="fas fa-desk"></i> Recepção
+            <% else %>
+              <%= @consulta.origem.humanize %>
+            <% end %>
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="label">Criada em:</span>
+          <span class="value"><%= l @consulta.created_at, format: :short %></span>
+        </div>
+        <% if @consulta.updated_at != @consulta.created_at %>
+          <div class="info-row">
+            <span class="label">Atualizada em:</span>
+            <span class="value"><%= l @consulta.updated_at, format: :short %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Observações -->
+  <% if @consulta.observacoes.present? %>
+    <div class="detail-card full-width">
+      <div class="card-header">
+        <i class="fas fa-sticky-note"></i>
+        <h3>Observações</h3>
+      </div>
+      <div class="card-content">
+        <p class="observations"><%= simple_format(@consulta.observacoes) %></p>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Ações -->
+  <div class="detail-actions">
+    <% if can_edit_consulta?(@consulta) %>
+      <%= link_to '#', class: 'btn btn-primary' do %>
+        <i class="fas fa-edit"></i> Editar Consulta
+      <% end %>
+    <% end %>
+    
+    <% if current_usuario.papel.in?(['admin', 'atendente']) && @consulta.status.in?(['marcada', 'confirmada']) %>
+      <%= link_to '#', class: 'btn btn-success' do %>
+        <i class="fas fa-play"></i> Iniciar Atendimento
+      <% end %>
+    <% end %>
+    
+    <% if current_usuario.papel.in?(['admin', 'atendente']) && @consulta.status.in?(['marcada', 'confirmada']) %>
+      <%= link_to '#', class: 'btn btn-danger', 
+                  data: { confirm: 'Tem certeza que deseja cancelar esta consulta?' } do %>
+        <i class="fas fa-times"></i> Cancelar
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<style>
+.consulta-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.detail-datetime {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.detail-datetime i {
+  font-size: 32px;
+  color: #3b82f6;
+}
+
+.datetime-info h2 {
+  margin: 0 0 4px 0;
+  color: #1f2937;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.datetime-info p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.detail-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.detail-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.card-header i {
+  font-size: 20px;
+  color: #3b82f6;
+}
+
+.card-header h3 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.card-content {
+  padding: 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  gap: 16px;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.info-row .label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.info-row .value {
+  font-size: 14px;
+  color: #1f2937;
+  text-align: right;
+  flex: 1;
+}
+
+.info-row .value a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.info-row .value a:hover {
+  text-decoration: underline;
+}
+
+.info-row .value i {
+  margin-right: 6px;
+}
+
+.observations {
+  color: #374151;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 24px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.btn-success {
+  background: #10b981;
+  color: white;
+  border-color: #10b981;
+}
+
+.btn-success:hover {
+  background: #059669;
+  border-color: #059669;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+@media (max-width: 768px) {
+  .detail-header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+  
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .info-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .info-row .value {
+    text-align: left;
+  }
+  
+  .detail-actions {
+    flex-direction: column;
+  }
+}
+</style>

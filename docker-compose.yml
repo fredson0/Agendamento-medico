@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/rails:delegated
+      - bundle_data:/usr/local/bundle
+      - storage_data:/rails/storage
+    environment:
+      RAILS_ENV: development
+      RAILS_LOG_TO_STDOUT: "true"
+    command: bash -lc "bundle install --jobs=4 --retry=3 && bin/rails db:prepare && bin/rails server -b 0.0.0.0 -p 3000"
+    stdin_open: true
+    tty: true
+
+volumes:
+  bundle_data:
+  storage_data:

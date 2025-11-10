@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  paciente: one
+  plano: one
+  numero_carteira: MyString
+  validade: 2025-10-02
+
+two:
+  paciente: two
+  plano: two
+  numero_carteira: MyString
+  validade: 2025-10-02

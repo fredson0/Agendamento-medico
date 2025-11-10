@@ -1,0 +1,568 @@
+<% content_for :title, "Consultas" %>
+
+<div class="page-header">
+  <div class="page-header-left">
+    <h1><i class="fas fa-calendar-check"></i> Consultas</h1>
+    <p class="subtitle">Gerencie e visualize as consultas médicas</p>
+  </div>
+  <div class="page-header-right">
+    <% if current_usuario.papel.in?(['admin', 'atendente']) %>
+      <%= link_to new_consulta_path, class: 'btn btn-primary' do %>
+        <i class="fas fa-plus"></i> Nova Consulta
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<!-- Filtros -->
+<div class="filters-card">
+  <%= form_with url: consultas_path, method: :get, class: 'filters-form', local: true do |f| %>
+    <div class="filters-grid">
+      <div class="filter-group">
+        <%= f.label :status, "Status:", class: 'filter-label' %>
+        <%= f.select :status, options_for_select(@status_options, params[:status]), 
+                     { prompt: false }, 
+                     { class: 'filter-select', onchange: 'this.form.submit()' } %>
+      </div>
+      
+      <% if current_usuario.papel.in?(['admin', 'atendente']) %>
+        <div class="filter-group">
+          <%= f.label :medico_id, "Médico:", class: 'filter-label' %>
+          <%= f.select :medico_id, 
+                       options_from_collection_for_select(@medicos, :id, :nome, params[:medico_id]),
+                       { prompt: 'Todos' },
+                       { class: 'filter-select', onchange: 'this.form.submit()' } %>
+        </div>
+      <% end %>
+      
+      <div class="filter-group">
+        <%= f.label :tipo, "Tipo:", class: 'filter-label' %>
+        <%= f.select :tipo, options_for_select(@tipo_options, params[:tipo]), 
+                     { prompt: false }, 
+                     { class: 'filter-select', onchange: 'this.form.submit()' } %>
+      </div>
+      
+      <div class="filter-group">
+        <%= f.label :data_inicio, "De:", class: 'filter-label' %>
+        <%= f.date_field :data_inicio, value: params[:data_inicio], 
+                         class: 'filter-input', onchange: 'this.form.submit()' %>
+      </div>
+      
+      <div class="filter-group">
+        <%= f.label :data_fim, "Até:", class: 'filter-label' %>
+        <%= f.date_field :data_fim, value: params[:data_fim], 
+                         class: 'filter-input', onchange: 'this.form.submit()' %>
+      </div>
+      
+      <div class="filter-group">
+        <%= link_to 'Limpar Filtros', consultas_path, class: 'btn btn-outline' %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- Resumo -->
+<div class="summary-stats">
+  <div class="stat-card">
+    <i class="fas fa-calendar-day"></i>
+    <div class="stat-info">
+      <span class="stat-number"><%= @consultas.count %></span>
+      <span class="stat-label">Consultas</span>
+    </div>
+  </div>
+  
+  <div class="stat-card">
+    <i class="fas fa-check-circle text-success"></i>
+    <div class="stat-info">
+      <span class="stat-number"><%= @consultas.where(status: 'confirmada').count %></span>
+      <span class="stat-label">Confirmadas</span>
+    </div>
+  </div>
+  
+  <div class="stat-card">
+    <i class="fas fa-clock text-warning"></i>
+    <div class="stat-info">
+      <span class="stat-number"><%= @consultas.where(status: 'marcada').count %></span>
+      <span class="stat-label">Pendentes</span>
+    </div>
+  </div>
+  
+  <div class="stat-card">
+    <i class="fas fa-video text-info"></i>
+    <div class="stat-info">
+      <span class="stat-number"><%= @consultas.where(tipo: 'teleconsulta').count %></span>
+      <span class="stat-label">Teleconsultas</span>
+    </div>
+  </div>
+</div>
+
+<!-- Lista de Consultas -->
+<div class="consultas-container">
+  <% if @consultas.any? %>
+    <div class="consultas-grid">
+      <% @consultas.each do |consulta| %>
+        <div class="consulta-card <%= status_card_class(consulta.status) %>">
+          <div class="consulta-header">
+            <div class="consulta-datetime">
+              <i class="fas fa-calendar"></i>
+              <span class="date"><%= l consulta.inicio.to_date, format: :long %></span>
+              <span class="time"><%= consulta.inicio.strftime('%H:%M') %> - <%= consulta.fim.strftime('%H:%M') %></span>
+            </div>
+            <div class="consulta-status">
+              <%= status_badge(consulta.status) %>
+            </div>
+          </div>
+          
+          <div class="consulta-body">
+            <div class="consulta-participants">
+              <div class="participant">
+                <i class="fas fa-user-injured"></i>
+                <div class="participant-info">
+                  <span class="label">Paciente</span>
+                  <span class="name"><%= consulta.paciente.nome %></span>
+                </div>
+              </div>
+              
+              <div class="participant">
+                <i class="fas fa-user-md"></i>
+                <div class="participant-info">
+                  <span class="label">Médico</span>
+                  <span class="name"><%= consulta.medico.nome %></span>
+                  <% if consulta.especialidade %>
+                    <span class="specialty"><%= consulta.especialidade.nome %></span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            
+            <div class="consulta-details">
+              <div class="detail-item">
+                <i class="fas fa-hospital"></i>
+                <span><%= consulta.unidade.nome %></span>
+              </div>
+              
+              <% if consulta.sala %>
+                <div class="detail-item">
+                  <i class="fas fa-door-open"></i>
+                  <span><%= consulta.sala.nome %></span>
+                </div>
+              <% end %>
+              
+              <div class="detail-item">
+                <%= tipo_icon(consulta.tipo) %>
+                <span><%= consulta.tipo.capitalize %></span>
+              </div>
+            </div>
+            
+            <% if consulta.observacoes.present? %>
+              <div class="consulta-notes">
+                <i class="fas fa-sticky-note"></i>
+                <span><%= truncate(consulta.observacoes, length: 80) %></span>
+              </div>
+            <% end %>
+          </div>
+          
+          <div class="consulta-actions">
+            <%= link_to consulta_path(consulta), class: 'btn btn-outline btn-sm' do %>
+              <i class="fas fa-eye"></i> Ver Detalhes
+            <% end %>
+            
+            <% if can_edit_consulta?(consulta) %>
+              <%= link_to '#', class: 'btn btn-outline btn-sm' do %>
+                <i class="fas fa-edit"></i> Editar
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <i class="fas fa-calendar-times"></i>
+      <h3>Nenhuma consulta encontrada</h3>
+      <p>Não há consultas que correspondam aos filtros selecionados.</p>
+      <% if current_usuario.papel.in?(['admin', 'atendente']) %>
+        <%= link_to 'Criar Nova Consulta', new_consulta_path, class: 'btn btn-primary' %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<style>
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.page-header h1 {
+  margin: 0 0 4px 0;
+  color: #1f2937;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.page-header h1 i {
+  color: #3b82f6;
+  margin-right: 8px;
+}
+
+.subtitle {
+  color: #6b7280;
+  margin: 0;
+  font-size: 14px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s;
+  border: 1px solid;
+  cursor: pointer;
+}
+
+.btn i {
+  margin-right: 6px;
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.btn-outline {
+  background: white;
+  color: #374151;
+  border-color: #d1d5db;
+}
+
+.btn-outline:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.filters-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.filters-form {
+  margin: 0;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.filter-select,
+.filter-input {
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stat-card i {
+  font-size: 24px;
+  color: #6b7280;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-number {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.text-success { color: #10b981; }
+.text-warning { color: #f59e0b; }
+.text-info { color: #3b82f6; }
+
+.consultas-container {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.consultas-grid {
+  display: grid;
+  gap: 1px;
+  background: #e5e7eb;
+}
+
+.consulta-card {
+  background: white;
+  padding: 20px;
+  transition: all 0.2s;
+}
+
+.consulta-card:hover {
+  background: #f9fafb;
+}
+
+.consulta-card.status-confirmada {
+  border-left: 4px solid #10b981;
+}
+
+.consulta-card.status-marcada {
+  border-left: 4px solid #f59e0b;
+}
+
+.consulta-card.status-em_atendimento {
+  border-left: 4px solid #3b82f6;
+}
+
+.consulta-card.status-concluida {
+  border-left: 4px solid #6b7280;
+}
+
+.consulta-card.status-cancelada {
+  border-left: 4px solid #ef4444;
+}
+
+.consulta-card.status-no_show {
+  border-left: 4px solid #f97316;
+}
+
+.consulta-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.consulta-datetime {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.consulta-datetime i {
+  color: #6b7280;
+}
+
+.date {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.time {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-marcada { background: #fef3c7; color: #92400e; }
+.status-confirmada { background: #d1fae5; color: #065f46; }
+.status-em_atendimento { background: #dbeafe; color: #1e40af; }
+.status-concluida { background: #f3f4f6; color: #374151; }
+.status-cancelada { background: #fee2e2; color: #991b1b; }
+.status-no_show { background: #fed7aa; color: #9a3412; }
+
+.consulta-participants {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.participant {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.participant i {
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.participant-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.participant-info .label {
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.participant-info .name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.participant-info .specialty {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.consulta-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.detail-item i {
+  width: 12px;
+  text-align: center;
+}
+
+.consulta-notes {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 8px;
+  background: #f9fafb;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.consulta-notes i {
+  margin-top: 1px;
+  color: #f59e0b;
+}
+
+.consulta-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 12px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+}
+
+.empty-state i {
+  font-size: 48px;
+  margin-bottom: 16px;
+  color: #d1d5db;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px 0;
+  color: #374151;
+}
+
+.empty-state p {
+  margin: 0 0 20px 0;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .summary-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .consulta-participants {
+    grid-template-columns: 1fr;
+  }
+  
+  .consultas-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

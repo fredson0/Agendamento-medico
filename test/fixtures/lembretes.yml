@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  consulta: one
+  canal: MyString
+  enviado_em: 2025-10-02 07:10:37
+  status: MyString
+
+two:
+  consulta: two
+  canal: MyString
+  enviado_em: 2025-10-02 07:10:37
+  status: MyString

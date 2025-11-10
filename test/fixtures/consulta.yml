@@ -1,0 +1,27 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  paciente: one
+  medico: one
+  unidade: one
+  sala: one
+  especialidade: one
+  inicio: 2025-10-02 07:10:32
+  fim: 2025-10-02 07:10:32
+  tipo: MyString
+  status: MyString
+  origem: MyString
+  observacoes: MyText
+
+two:
+  paciente: two
+  medico: two
+  unidade: two
+  sala: two
+  especialidade: two
+  inicio: 2025-10-02 07:10:32
+  fim: 2025-10-02 07:10:32
+  tipo: MyString
+  status: MyString
+  origem: MyString
+  observacoes: MyText
