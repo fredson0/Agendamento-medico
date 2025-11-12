@@ -103,7 +103,7 @@ class DashboardController < ApplicationController
   end
 
   def load_shared_data
-    # Dados úteis para todos os tipos de usuário
+    # Dados compartilhados entre todos os usuários
     @total_consultas_sistema = Consulta.count
     @data_atual = l(@hoje, format: :long)
   end

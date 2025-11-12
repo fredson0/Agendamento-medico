@@ -1,7 +1,9 @@
 # syntax=docker/dockerfile:1
 # check=error=true
 
-# This Dockerfile works for both development and production
+# Medical Appointment Management System
+# Rails 8.0.1 Application Container
+# 
 # Development: docker compose up --build
 # Production: docker build -t agendamento-medico . && docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value> agendamento-medico
 

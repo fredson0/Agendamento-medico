@@ -70,14 +70,16 @@ class AuthController < ApplicationController
     }, status: :ok
   end
 
+  # Endpoint de teste - apenas para desenvolvimento
   def test_login
+    return render json: { error: 'Não disponível em produção' }, status: :forbidden unless Rails.env.development?
+    
     username = params[:username]
     password = params[:password]
 
     usuario = Usuario.find_by(username: username)
 
     if usuario&.authenticate(password)
-      # Gerar token JWT
       payload = {
         user_id: usuario.id,
         username: usuario.username,
@@ -88,7 +90,7 @@ class AuthController < ApplicationController
 
       render json: {
         success: true,
-        message: 'Login realizado com sucesso',
+        message: 'Login de teste realizado com sucesso',
         token: token,
         user: {
           id: usuario.id,

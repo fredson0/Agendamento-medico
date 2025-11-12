@@ -44,6 +44,10 @@
 *~
 *.tmp
 *.bak
+*.temp
+*.temp2
 *_backup*
 *_fixed*
 *_debug*
+.DS_Store
+Thumbs.db

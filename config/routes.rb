@@ -1,54 +1,46 @@
 Rails.application.routes.draw do
-  # Rotas principais definidas abaixo (removidas rotas geradas redundantes)
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # Health check endpoint
   get "up" => "rails/health#show", as: :rails_health_check
-
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-
-  # Defines the root path route ("/")
-  # root "posts#index"
+  
+  # Página inicial
   root to: 'dashboard#index'
 
+  # Autenticação
   get '/login', to: 'sessions#new', as: :login
   post '/login', to: 'sessions#create'
   delete '/logout', to: 'sessions#destroy', as: :logout
 
-  # Registro de pacientes (página pública)
+  # Registro de pacientes
   get '/registrar', to: 'pacientes#new', as: :registrar
   post '/registrar', to: 'pacientes#create'
 
-  # Rotas para pacientes verem suas consultas
+  # Consultas de pacientes
   get '/minhas_consultas', to: 'pacientes#minhas_consultas', as: :minhas_consultas
 
-  # Rotas para agendamento de consultas (pacientes)
+  # Agendamento de consultas
   get '/agendamento', to: 'agendamentos#index', as: :agendamento
   get '/agendamento/medicos', to: 'agendamentos#medicos', as: :agendamento_medicos
   get '/agendamento/horarios', to: 'agendamentos#horarios', as: :agendamento_horarios
   get '/agendamento/confirmar', to: 'agendamentos#confirmar', as: :agendamento_confirmar
   post '/agendamentos', to: 'agendamentos#create', as: :agendamentos
 
-  # Página de ajuda e suporte
+  # Ajuda e suporte
   get '/ajuda', to: 'ajuda#index', as: :ajuda
 
   # Perfil do usuário
   get '/perfil', to: 'usuarios#perfil', as: :perfil
   patch '/perfil', to: 'usuarios#update_perfil'
 
-  # API de Autenticação JWT
+  # API JWT
   scope '/auth', controller: :auth do
     post :login
     delete :logout
     get :me
   end
   
-  # Test endpoint
-  get '/auth/test/:username/:password', to: 'auth#test_login'
+  # Endpoint de teste JWT (remover em produção)
+  get '/auth/test/:username/:password', to: 'auth#test_login' if Rails.env.development?
 
-  # dashboard via root
+  # Consultas
   resources :consultas, only: [:index, :show, :new, :create]
 end
