@@ -77,11 +77,47 @@ module ApplicationHelper
     current_section = controller_name == 'dashboard' ? 'dashboard' : controller_name
     current_section = 'agendamento' if controller_name == 'agendamentos'
     current_section = 'nova_consulta' if controller_name == 'consultas' && action_name == 'new'
+    current_section = 'perfil' if controller_name == 'usuarios' && action_name == 'perfil'
     
     if current_section == section.to_s
       "#{base_class} active"
     else
       base_class
     end
+  end
+
+  def role_badge_class(papel)
+    case papel
+    when 'admin'
+      'danger'
+    when 'medico'
+      'success'
+    when 'atendente'
+      'warning'
+    when 'paciente'
+      'primary'
+    else
+      'secondary'
+    end
+  end
+
+  def role_icon(papel)
+    case papel
+    when 'admin'
+      'user-shield'
+    when 'medico'
+      'user-md'
+    when 'atendente'
+      'user-tie'
+    when 'paciente'
+      'user-injured'
+    else
+      'user'
+    end
+  end
+
+  def mask_cpf(cpf)
+    return '' if cpf.blank?
+    cpf.gsub(/(\d{3})(\d{3})(\d{3})(\d{2})/, '\1.***.**\4')
   end
 end

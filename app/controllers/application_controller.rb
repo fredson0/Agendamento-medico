@@ -6,6 +6,9 @@ class ApplicationController < ActionController::Base
   private
 
   def current_usuario
+    # Priority: JWT token first, then session
+    return @current_usuario_from_token if @current_usuario_from_token.present?
+    
     return @current_usuario if defined?(@current_usuario)
     if session[:usuario_id]
       @current_usuario = Usuario.find_by(id: session[:usuario_id])

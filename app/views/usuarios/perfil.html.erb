@@ -1,0 +1,354 @@
+<% content_for :page_title, 'Meu Perfil' %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="page-header">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-user me-3" style="font-size: 2rem; color: #007bff;"></i>
+          <div>
+            <h1 class="mb-0">Meu Perfil</h1>
+            <p class="text-muted mb-0">Gerencie suas informações pessoais</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Sidebar com Avatar e Info Básica -->
+    <div class="col-lg-4 col-md-5">
+      <div class="card profile-card">
+        <div class="card-body text-center">
+          <div class="profile-avatar mb-3">
+            <div class="avatar-circle">
+              <%= @usuario.username.first.upcase %>
+            </div>
+          </div>
+          
+          <h4 class="profile-name">
+            <% if @usuario.papel == 'paciente' && @paciente %>
+              <%= @paciente.nome %>
+            <% elsif @usuario.papel == 'medico' && @medico %>
+              <%= @medico.nome %>
+            <% else %>
+              <%= @usuario.username %>
+            <% end %>
+          </h4>
+          
+          <div class="profile-role">
+            <span class="badge bg-<%= role_badge_class(@usuario.papel) %>">
+              <i class="fas fa-<%= role_icon(@usuario.papel) %> me-1"></i>
+              <%= @usuario.papel.titleize %>
+            </span>
+          </div>
+
+          <div class="profile-stats mt-4">
+            <div class="row text-center">
+              <div class="col-4">
+                <div class="stat-number">
+                  <% if @usuario.papel == 'paciente' %>
+                    <%= Consulta.where(paciente: @paciente).count %>
+                  <% elsif @usuario.papel == 'medico' %>
+                    <%= Consulta.where(medico: @medico).count %>
+                  <% else %>
+                    0
+                  <% end %>
+                </div>
+                <div class="stat-label">Consultas</div>
+              </div>
+              <div class="col-4">
+                <div class="stat-number">
+                  <%= distance_of_time_in_words_to_now(@usuario.created_at) %>
+                </div>
+                <div class="stat-label">Membro há</div>
+              </div>
+              <div class="col-4">
+                <div class="stat-number">
+                  <%= @usuario.updated_at.strftime('%d/%m') %>
+                </div>
+                <div class="stat-label">Últ. Atualização</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card de Informações Rápidas -->
+      <div class="card mt-3">
+        <div class="card-header">
+          <h6 class="card-title mb-0">
+            <i class="fas fa-info-circle me-2"></i>
+            Informações da Conta
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="info-item">
+            <span class="info-label">Usuário:</span>
+            <span class="info-value">@<%= @usuario.username %></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Tipo:</span>
+            <span class="info-value"><%= @usuario.papel.titleize %></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Cadastrado em:</span>
+            <span class="info-value"><%= @usuario.created_at.strftime('%d/%m/%Y') %></span>
+          </div>
+          <% if @usuario.papel == 'paciente' && @paciente %>
+            <div class="info-item">
+              <span class="info-label">CPF:</span>
+              <span class="info-value"><%= mask_cpf(@paciente.cpf) %></span>
+            </div>
+          <% elsif @usuario.papel == 'medico' && @medico %>
+            <div class="info-item">
+              <span class="info-label">CRM:</span>
+              <span class="info-value"><%= @medico.crm %>/<%= @medico.uf_crm %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulário de Edição -->
+    <div class="col-lg-8 col-md-7">
+      <%= form_with model: @usuario, url: perfil_path, method: :patch, local: true, class: 'profile-form' do |form| %>
+        
+        <!-- Dados da Conta -->
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-key me-2"></i>
+              Dados da Conta
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <%= form.label :username, 'Nome de Usuário', class: 'form-label' %>
+                <%= form.text_field :username, class: 'form-control', required: true %>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Nova Senha</label>
+                <%= form.password_field :password, class: 'form-control', placeholder: 'Deixe em branco para manter a atual' %>
+                <small class="form-text text-muted">
+                  Mínimo 6 caracteres (deixe em branco se não quiser alterar)
+                </small>
+              </div>
+              <div class="col-md-6 mt-3">
+                <label class="form-label">Confirmar Nova Senha</label>
+                <%= form.password_field :password_confirmation, class: 'form-control', placeholder: 'Confirme a nova senha' %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dados Pessoais (Paciente) -->
+        <% if @usuario.papel == 'paciente' && @paciente %>
+          <div class="card mt-3">
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                <i class="fas fa-user-injured me-2"></i>
+                Dados Pessoais
+              </h5>
+            </div>
+            <div class="card-body">
+              <%= fields_for :paciente, @paciente do |p| %>
+                <div class="row">
+                  <div class="col-md-8">
+                    <%= p.label :nome, 'Nome Completo', class: 'form-label' %>
+                    <%= p.text_field :nome, class: 'form-control', required: true %>
+                  </div>
+                  <div class="col-md-4">
+                    <%= p.label :telefone, class: 'form-label' %>
+                    <%= p.telephone_field :telefone, class: 'form-control phone-mask' %>
+                  </div>
+                  <div class="col-md-6 mt-3">
+                    <%= p.label :email, class: 'form-label' %>
+                    <%= p.email_field :email, class: 'form-control' %>
+                  </div>
+                  <div class="col-md-12 mt-3">
+                    <%= p.label :endereco, 'Endereço', class: 'form-label' %>
+                    <%= p.text_area :endereco, class: 'form-control', rows: 3 %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Dados Profissionais (Médico) -->
+        <% if @usuario.papel == 'medico' && @medico %>
+          <div class="card mt-3">
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                <i class="fas fa-user-md me-2"></i>
+                Dados Profissionais
+              </h5>
+            </div>
+            <div class="card-body">
+              <%= fields_for :medico, @medico do |m| %>
+                <div class="row">
+                  <div class="col-md-8">
+                    <%= m.label :nome, 'Nome Completo', class: 'form-label' %>
+                    <%= m.text_field :nome, class: 'form-control', required: true %>
+                  </div>
+                  <div class="col-md-4">
+                    <%= m.label :telefone, class: 'form-label' %>
+                    <%= m.telephone_field :telefone, class: 'form-control phone-mask' %>
+                  </div>
+                  <div class="col-md-6 mt-3">
+                    <%= m.label :email, class: 'form-label' %>
+                    <%= m.email_field :email, class: 'form-control' %>
+                  </div>
+                  <div class="col-md-3 mt-3">
+                    <%= m.label :crm, class: 'form-label' %>
+                    <%= m.text_field :crm, class: 'form-control', readonly: true %>
+                    <small class="form-text text-muted">CRM não pode ser alterado</small>
+                  </div>
+                  <div class="col-md-3 mt-3">
+                    <%= m.label :uf_crm, 'UF do CRM', class: 'form-label' %>
+                    <%= m.text_field :uf_crm, class: 'form-control', readonly: true %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Botões de Ação -->
+        <div class="card mt-3">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <%= link_to root_path, class: 'btn btn-outline-secondary' do %>
+                <i class="fas fa-arrow-left me-2"></i>
+                Voltar ao Dashboard
+              <% end %>
+              
+              <%= form.submit 'Salvar Alterações', class: 'btn btn-primary' do %>
+                <i class="fas fa-save me-2"></i>
+                Salvar Alterações
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<style>
+.profile-card {
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-circle {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0 auto;
+}
+
+.profile-name {
+  color: #333;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.profile-role {
+  margin-bottom: 1rem;
+}
+
+.profile-stats .stat-number {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.profile-stats .stat-label {
+  font-size: 0.8rem;
+  color: #6c757d;
+  text-transform: uppercase;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.info-value {
+  font-weight: 600;
+  color: #333;
+}
+
+.page-header {
+  padding: 2rem 0;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 2rem;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+.card-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0056b3, #004085);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Máscara de telefone
+  const phoneInputs = document.querySelectorAll('.phone-mask');
+  phoneInputs.forEach(input => {
+    input.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length >= 11) {
+        value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+      } else if (value.length >= 7) {
+        value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+      } else if (value.length >= 3) {
+        value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+      }
+      e.target.value = value;
+    });
+  });
+});
+</script>

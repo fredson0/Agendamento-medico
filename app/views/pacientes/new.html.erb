@@ -1,45 +1,242 @@
-<h1>Cadastro de Paciente</h1>
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0"><i class="fas fa-user-plus"></i> Cadastro de Paciente</h3>
+        </div>
+        <div class="card-body">
 
-<%= form_with url: registrar_path, local: true do |f| %>
-  <fieldset>
-    <legend>Dados do usuário</legend>
-    <div>
-      <label>Username</label><br>
-      <%= text_field_tag 'usuario[username]', @usuario.username %>
-    </div>
-    <div>
-      <label>Senha</label><br>
-      <%= password_field_tag 'usuario[password]' %>
-    </div>
-    <div>
-      <label>Confirme a senha</label><br>
-      <%= password_field_tag 'usuario[password_confirmation]' %>
-    </div>
-  </fieldset>
+          <% if @usuario&.errors&.any? || @paciente&.errors&.any? %>
+            <div class="alert alert-danger" role="alert">
+              <h5 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Erros encontrados:</h5>
+              <ul class="mb-0">
+                <% @usuario&.errors&.full_messages&.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+                <% @paciente&.errors&.full_messages&.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
 
-  <fieldset>
-    <legend>Dados do paciente</legend>
-    <div>
-      <label>Nome</label><br>
-      <%= text_field_tag 'paciente[nome]', @paciente.nome %>
-    </div>
-    <div>
-      <label>CPF</label><br>
-      <%= text_field_tag 'paciente[cpf]', @paciente.cpf %>
-    </div>
-    <div>
-      <label>Email</label><br>
-      <%= email_field_tag 'paciente[email]', @paciente.email %>
-    </div>
-    <div>
-      <label>Telefone</label><br>
-      <%= text_field_tag 'paciente[telefone]', @paciente.telefone %>
-    </div>
-  </fieldset>
+          <%= form_with url: registrar_path, local: true do |f| %>
+            
+            <!-- Dados do Usuário -->
+            <div class="card mb-3">
+              <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-key"></i> Dados de Acesso</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12 mb-3">
+                    <label class="form-label"><strong>Username *</strong></label>
+                    <%= text_field_tag 'usuario[username]', @usuario&.username, 
+                        class: 'form-control', 
+                        placeholder: 'Digite seu nome de usuário',
+                        required: true %>
+                    <div class="form-text">Este será seu nome de usuário para login</div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label"><strong>Senha *</strong></label>
+                    <%= password_field_tag 'usuario[password]', '', 
+                        class: 'form-control', 
+                        placeholder: 'Digite sua senha',
+                        required: true, 
+                        minlength: 6 %>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label"><strong>Confirme a Senha *</strong></label>
+                    <%= password_field_tag 'usuario[password_confirmation]', '', 
+                        class: 'form-control', 
+                        placeholder: 'Confirme sua senha',
+                        required: true %>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-  <div style="margin-top:10px;">
-    <%= submit_tag 'Registrar' %>
+            <!-- Dados do Paciente -->
+            <div class="card mb-3">
+              <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-user"></i> Dados Pessoais</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12 mb-3">
+                    <label class="form-label"><strong>Nome Completo *</strong></label>
+                    <%= text_field_tag 'paciente[nome]', @paciente&.nome, 
+                        class: 'form-control', 
+                        placeholder: 'Digite seu nome completo',
+                        required: true, 
+                        maxlength: 150 %>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label"><strong>CPF *</strong></label>
+                    <%= text_field_tag 'paciente[cpf]', @paciente&.cpf, 
+                        class: 'form-control cpf-mask', 
+                        placeholder: '000.000.000-00',
+                        required: true, 
+                        maxlength: 14 %>
+                    <div class="form-text">Somente números (será formatado automaticamente)</div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label"><strong>Data de Nascimento</strong></label>
+                    <%= date_field_tag 'paciente[data_nascimento]', @paciente&.data_nascimento, 
+                        class: 'form-control' %>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label"><strong>Email</strong></label>
+                    <%= email_field_tag 'paciente[email]', @paciente&.email, 
+                        class: 'form-control', 
+                        placeholder: 'seu.email@exemplo.com',
+                        maxlength: 100 %>
+                    <div class="form-text">Campo opcional</div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label"><strong>Telefone</strong></label>
+                    <%= text_field_tag 'paciente[telefone]', @paciente&.telefone, 
+                        class: 'form-control phone-mask', 
+                        placeholder: '(00) 00000-0000',
+                        maxlength: 20 %>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label"><strong>Sexo</strong></label>
+                    <%= select_tag 'paciente[sexo]', 
+                        options_for_select([
+                          ['Selecione', ''],
+                          ['Masculino', 'M'],
+                          ['Feminino', 'F'],
+                          ['Outro', 'O']
+                        ], @paciente&.sexo),
+                        class: 'form-select' %>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label"><strong>Endereço</strong></label>
+                    <%= text_area_tag 'paciente[endereco]', @paciente&.endereco, 
+                        class: 'form-control', 
+                        placeholder: 'Rua, número, bairro, cidade',
+                        rows: 2,
+                        maxlength: 255 %>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2 mb-3">
+              <%= submit_tag 'Cadastrar Paciente', 
+                  class: 'btn btn-primary btn-lg', 
+                  data: { disable_with: 'Cadastrando...' } %>
+            </div>
+          <% end %>
+
+          
+        </div>
+        <div class="card-footer bg-light text-center">
+          <div class="d-flex justify-content-center gap-2">
+            <%= link_to login_path, class: 'btn btn-outline-secondary' do %>
+              <i class="fas fa-sign-in-alt"></i> Já tenho conta
+            <% end %>
+            <%= link_to root_path, class: 'btn btn-outline-primary' do %>
+              <i class="fas fa-home"></i> Voltar ao Início
+            <% end %>
+          </div>
+          <small class="text-muted mt-2 d-block">
+            <i class="fas fa-shield-alt"></i> Seus dados estão seguros conosco
+          </small>
+        </div>
+      </div>
+    </div>
   </div>
-<% end %>
+</div>
 
-<%= link_to 'Voltar', root_path %>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Máscara para CPF - mais robusta
+  const cpfInput = document.querySelector('.cpf-mask');
+  if (cpfInput) {
+    cpfInput.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      
+      // Limita a 11 dígitos
+      if (value.length > 11) {
+        value = value.substring(0, 11);
+      }
+      
+      // Aplica a máscara
+      if (value.length > 9) {
+        value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+      } else if (value.length > 6) {
+        value = value.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+      } else if (value.length > 3) {
+        value = value.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+      }
+      
+      e.target.value = value;
+    });
+    
+    // Remove formatação ao enviar para salvar apenas números
+    cpfInput.closest('form').addEventListener('submit', function() {
+      cpfInput.value = cpfInput.value.replace(/\D/g, '');
+    });
+  }
+
+  // Máscara para telefone - mais robusta
+  const phoneInput = document.querySelector('.phone-mask');
+  if (phoneInput) {
+    phoneInput.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      
+      // Limita a 11 dígitos
+      if (value.length > 11) {
+        value = value.substring(0, 11);
+      }
+      
+      // Aplica máscara baseada no tamanho
+      if (value.length > 10) {
+        // Celular: (00) 00000-0000
+        value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+      } else if (value.length > 6) {
+        // Fixo: (00) 0000-0000
+        value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+      } else if (value.length > 2) {
+        value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+      }
+      
+      e.target.value = value;
+    });
+  }
+
+  // Validação de senhas
+  const passwordInput = document.querySelector('input[name="usuario[password]"]');
+  const confirmInput = document.querySelector('input[name="usuario[password_confirmation]"]');
+  
+  if (passwordInput && confirmInput) {
+    function validatePasswords() {
+      if (confirmInput.value && passwordInput.value !== confirmInput.value) {
+        confirmInput.setCustomValidity('As senhas não coincidem');
+        confirmInput.classList.add('is-invalid');
+      } else {
+        confirmInput.setCustomValidity('');
+        confirmInput.classList.remove('is-invalid');
+      }
+    }
+    
+    passwordInput.addEventListener('input', validatePasswords);
+    confirmInput.addEventListener('input', validatePasswords);
+  }
+
+  // Remove validações HTML5 que podem estar conflitando
+  const form = document.querySelector('form');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      // Permite o envio normal, mas limpa formatações
+      const cpf = document.querySelector('.cpf-mask');
+      if (cpf) {
+        cpf.value = cpf.value.replace(/\D/g, '');
+      }
+    });
+  }
+});
+</script>

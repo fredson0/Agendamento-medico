@@ -1,0 +1,36 @@
+class JwtHelper
+  SECRET_KEY = Rails.application.credentials.secret_key_base || 'fallback_secret_key'
+  
+  def self.encode(payload, exp = 24.hours.from_now)
+    payload[:exp] = exp.to_i
+    payload[:iat] = Time.current.to_i
+    JWT.encode(payload, SECRET_KEY)
+  end
+  
+  def self.decode(token)
+    decoded = JWT.decode(token, SECRET_KEY)[0]
+    HashWithIndifferentAccess.new(decoded)
+  rescue JWT::DecodeError => e
+    nil
+  end
+  
+  def self.valid_token?(token)
+    !!decode(token)
+  end
+  
+  def self.expired?(token)
+    decoded = decode(token)
+    return true unless decoded
+    
+    Time.current.to_i > decoded[:exp]
+  end
+  
+  def self.user_from_token(token)
+    decoded = decode(token)
+    return nil unless decoded
+    
+    Usuario.find_by(id: decoded[:user_id])
+  rescue ActiveRecord::RecordNotFound
+    nil
+  end
+end

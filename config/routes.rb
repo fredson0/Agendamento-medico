@@ -35,6 +35,20 @@ Rails.application.routes.draw do
   # Página de ajuda e suporte
   get '/ajuda', to: 'ajuda#index', as: :ajuda
 
+  # Perfil do usuário
+  get '/perfil', to: 'usuarios#perfil', as: :perfil
+  patch '/perfil', to: 'usuarios#update_perfil'
+
+  # API de Autenticação JWT
+  scope '/auth', controller: :auth do
+    post :login
+    delete :logout
+    get :me
+  end
+  
+  # Test endpoint
+  get '/auth/test/:username/:password', to: 'auth#test_login'
+
   # dashboard via root
   resources :consultas, only: [:index, :show, :new, :create]
 end

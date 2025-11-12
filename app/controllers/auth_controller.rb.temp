@@ -1,0 +1,133 @@
+class AuthController < ApplicationController
+  skip_before_action :verify_authenticity_token
+  
+  # Métodos JWT inline para evitar problemas com concerns
+  private
+  
+  def authenticate_with_token
+    token = extract_token_from_header
+    return unless token.present?
+    
+    if JwtHelper.valid_token?(token) && !JwtHelper.expired?(token)
+      @current_usuario_from_token = JwtHelper.user_from_token(token)
+    end
+  end
+  
+  def extract_token_from_header
+    auth_header = request.headers['Authorization']
+    return nil unless auth_header&.start_with?('Bearer ')
+    auth_header.split(' ').last
+  end
+  
+  public
+  
+  def login
+    begin
+      # Parse JSON body if content-type is JSON
+      if request.content_type == 'application/json'
+        body = JSON.parse(request.raw_post)
+        username = body['username']
+        password = body['password']
+      else
+        username = params[:username]
+        password = params[:password]
+      end
+      
+      if username.blank? || password.blank?
+        render json: { error: 'Username e password são obrigatórios' }, status: :bad_request
+        return
+      end
+      
+      usuario = Usuario.find_by(username: username)
+      
+      unless usuario&.authenticate(password)
+        render json: { error: 'Credenciais inválidas' }, status: :unauthorized
+        return
+      end
+      
+      # Gerar token JWT
+      payload = {
+        user_id: usuario.id,
+        username: usuario.username,
+        papel: usuario.papel
+      }
+      
+      token = JwtHelper.encode(payload)
+      
+      render json: {
+        message: 'Login realizado com sucesso',
+        token: token,
+        user: {
+          id: usuario.id,
+          username: usuario.username,
+          papel: usuario.papel
+        },
+        expires_at: 24.hours.from_now.iso8601
+      }, status: :ok
+      
+    rescue => e
+      render json: { error: "Erro interno: #{e.message}" }, status: :internal_server_error
+    end
+  end
+  
+  def logout
+    # Com JWT stateless, logout é só no frontend
+    # Aqui podemos implementar blacklist se necessário
+    render json: { message: 'Logout realizado com sucesso' }, status: :ok
+  end
+  
+  def me
+    usuario = @current_usuario_from_token || current_usuario
+    
+    unless usuario
+      render json: { error: 'Usuário não encontrado' }, status: :unauthorized
+      return
+    end
+    
+    render json: {
+      user: {
+        id: usuario.id,
+        username: usuario.username,
+        papel: usuario.papel,
+        created_at: usuario.created_at
+      }
+    }, status: :ok
+  end
+  
+  def refresh
+    # Para implementar refresh token posteriormente
+    render json: { error: 'Refresh token não implementado ainda' }, status: :not_implemented
+  end
+  
+  def test_login
+    username = params[:username]
+    password = params[:password]
+    
+    usuario = Usuario.find_by(username: username)
+    
+    if usuario&.authenticate(password)
+      # Gerar token JWT
+      payload = {
+        user_id: usuario.id,
+        username: usuario.username,
+        papel: usuario.papel
+      }
+      
+      token = JwtHelper.encode(payload)
+      
+      render json: {
+        success: true,
+        message: 'Login realizado com sucesso',
+        token: token,
+        user: {
+          id: usuario.id,
+          username: usuario.username,
+          papel: usuario.papel
+        },
+        expires_at: 24.hours.from_now.iso8601
+      }
+    else
+      render json: { success: false, error: 'Credenciais inválidas' }, status: :unauthorized
+    end
+  end
+end

@@ -1,15 +1,49 @@
-<h1>Login</h1>
-
-<%= form_with url: login_path, method: :post, local: true do |f| %>
-	<div>
-		<label>Username</label><br>
-		<input type="text" name="username" />
-	</div>
-	<div style="margin-top:8px;">
-		<label>Senha</label><br>
-		<input type="password" name="password" />
-	</div>
-	<div style="margin-top:12px;">
-		<button type="submit">Entrar</button>
-	</div>
-<% end %>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+          <h3 class="mb-0"><i class="fas fa-sign-in-alt"></i> Login</h3>
+        </div>
+        <div class="card-body p-4">
+          <%= form_with url: login_path, method: :post, local: true, class: 'needs-validation', novalidate: true do |f| %>
+            <div class="mb-3">
+              <label class="form-label"><strong>Username</strong></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                <input type="text" name="username" class="form-control" placeholder="Digite seu username" required />
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label"><strong>Senha</strong></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" name="password" class="form-control" placeholder="Digite sua senha" required />
+              </div>
+            </div>
+            
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-sign-in-alt"></i> Entrar
+              </button>
+            </div>
+          <% end %>
+        </div>
+        
+        <div class="card-footer bg-light text-center">
+          <small class="text-muted">Não tem uma conta?</small><br>
+          <%= link_to registrar_path, class: 'btn btn-outline-success btn-sm mt-2' do %>
+            <i class="fas fa-user-plus"></i> Cadastrar como Paciente
+          <% end %>
+        </div>
+      </div>
+      
+      <div class="text-center mt-3">
+        <%= link_to root_path, class: 'btn btn-link' do %>
+          <i class="fas fa-home"></i> Voltar ao Início
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
