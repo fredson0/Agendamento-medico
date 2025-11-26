@@ -1,0 +1,353 @@
+<% content_for :page_title, 'Realizar Atendimento Médico' %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="page-header">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-user-md me-3" style="font-size: 2rem; color: #28a745;"></i>
+          <div>
+            <h1 class="mb-0">Realizar Atendimento</h1>
+            <p class="text-muted mb-0">Registre os dados do atendimento médico</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Informações da Consulta -->
+    <div class="col-lg-4">
+      <div class="card consulta-info">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-info-circle me-2"></i>
+            Informações da Consulta
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="info-item">
+            <span class="info-label">Paciente:</span>
+            <span class="info-value"><%= @consulta.paciente.nome %></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">CPF:</span>
+            <span class="info-value"><%= mask_cpf(@consulta.paciente.cpf) %></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Especialidade:</span>
+            <span class="info-value"><%= @consulta.especialidade&.nome || 'Clínica Geral' %></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Data/Hora:</span>
+            <span class="info-value"><%= @consulta.inicio.strftime('%d/%m/%Y às %H:%M') %></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Tipo:</span>
+            <span class="info-value"><%= @consulta.tipo.titleize %></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Unidade:</span>
+            <span class="info-value"><%= @consulta.unidade.nome %></span>
+          </div>
+          <% if @consulta.sala %>
+            <div class="info-item">
+              <span class="info-label">Sala:</span>
+              <span class="info-value"><%= @consulta.sala.nome %></span>
+            </div>
+          <% end %>
+          <% if @consulta.observacoes.present? %>
+            <div class="info-item">
+              <span class="info-label">Observações:</span>
+              <span class="info-value"><%= simple_format(@consulta.observacoes) %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Histórico do Paciente -->
+      <div class="card mt-3">
+        <div class="card-header">
+          <h6 class="card-title mb-0">
+            <i class="fas fa-history me-2"></i>
+            Histórico Recente
+          </h6>
+        </div>
+        <div class="card-body">
+          <% consultas_anteriores = Consulta.where(paciente: @consulta.paciente, status: 'realizada').where.not(id: @consulta.id).order(data_realizacao: :desc).limit(3) %>
+          <% if consultas_anteriores.any? %>
+            <% consultas_anteriores.each do |consulta| %>
+              <div class="historico-item">
+                <div class="historico-data">
+                  <%= consulta.data_realizacao.strftime('%d/%m/%Y') %>
+                </div>
+                <div class="historico-medico">
+                  Dr. <%= consulta.medico.nome %>
+                </div>
+                <% if consulta.relatorio_medico.present? %>
+                  <div class="historico-resumo">
+                    <%= truncate(consulta.relatorio_medico, length: 100) %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="text-muted mb-0">Primeira consulta do paciente</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulário de Atendimento -->
+    <div class="col-lg-8">
+      <%= form_with model: @consulta, url: finalizar_atendimento_consulta_path(@consulta), method: :patch, local: true, class: 'atendimento-form' do |form| %>
+        
+        <!-- Relatório Médico -->
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-clipboard-list me-2"></i>
+              Relatório do Atendimento
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <%= form.label :relatorio_medico, 'Relatório Médico *', class: 'form-label' %>
+              <%= form.text_area :relatorio_medico, class: 'form-control', rows: 6, required: true, 
+                    placeholder: 'Descreva o quadro clínico, sintomas, exame físico, diagnóstico e conduta médica...' %>
+              <small class="form-text text-muted">
+                Este campo é obrigatório e será usado para gerar o comprovante de atendimento.
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prescrições e Medicamentos -->
+        <div class="card mt-3">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-pills me-2"></i>
+              Receitas e Medicamentos
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <%= form.label :receitas_medicamentos, 'Receitas / Medicamentos Prescritos', class: 'form-label' %>
+              <%= form.text_area :receitas_medicamentos, class: 'form-control', rows: 4, 
+                    placeholder: 'Liste os medicamentos prescritos com dosagem e posologia...' %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exames e Atestados -->
+        <div class="card mt-3">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-x-ray me-2"></i>
+              Exames e Documentos Médicos
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <%= form.label :exames_solicitados, 'Exames Solicitados', class: 'form-label' %>
+                  <%= form.text_area :exames_solicitados, class: 'form-control', rows: 3, 
+                        placeholder: 'Liste os exames solicitados...' %>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <%= form.label :atestado_medico, 'Atestado Médico', class: 'form-label' %>
+                  <%= form.text_area :atestado_medico, class: 'form-control', rows: 3, 
+                        placeholder: 'Motivo e dias de afastamento (se aplicável)...' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Próxima Consulta e Valores -->
+        <div class="card mt-3">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-calendar-plus me-2"></i>
+              Agendamentos e Valores
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <%= form.label :proxima_consulta, 'Próxima Consulta (Sugestão)', class: 'form-label' %>
+                  <%= form.date_field :proxima_consulta, class: 'form-control', min: Date.current %>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <%= form.label :valor_pago, 'Valor da Consulta', class: 'form-label' %>
+                  <div class="input-group">
+                    <span class="input-group-text">R$</span>
+                    <%= form.number_field :valor_pago, class: 'form-control', step: 0.01, min: 0, 
+                          placeholder: '0,00' %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="card mt-3">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <%= link_to @consulta, class: 'btn btn-outline-secondary' do %>
+                <i class="fas fa-arrow-left me-2"></i>
+                Voltar à Consulta
+              <% end %>
+              
+              <div>
+                <%= form.submit 'Finalizar Atendimento', class: 'btn btn-success btn-lg' do %>
+                  <i class="fas fa-check me-2"></i>
+                  Finalizar Atendimento
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<style>
+.consulta-info {
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #6c757d;
+  min-width: 100px;
+}
+
+.info-value {
+  font-weight: 500;
+  color: #333;
+  text-align: right;
+  flex: 1;
+  margin-left: 1rem;
+}
+
+.historico-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.historico-item:last-child {
+  border-bottom: none;
+}
+
+.historico-data {
+  font-weight: 600;
+  color: #007bff;
+  font-size: 0.9rem;
+}
+
+.historico-medico {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.historico-resumo {
+  font-size: 0.8rem;
+  color: #495057;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.page-header {
+  padding: 2rem 0;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 2rem;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+.card-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  border: none;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #218838, #1ea97c);
+}
+
+.atendimento-form .form-control:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Auto-resize dos textareas
+  const textareas = document.querySelectorAll('textarea');
+  textareas.forEach(textarea => {
+    textarea.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = this.scrollHeight + 'px';
+    });
+  });
+
+  // Validação do formulário
+  const form = document.querySelector('.atendimento-form');
+  form.addEventListener('submit', function(e) {
+    const relatorioMedico = document.getElementById('consulta_relatorio_medico');
+    
+    if (!relatorioMedico.value.trim()) {
+      e.preventDefault();
+      alert('O relatório médico é obrigatório para finalizar o atendimento.');
+      relatorioMedico.focus();
+      return false;
+    }
+
+    if (relatorioMedico.value.trim().length < 20) {
+      e.preventDefault();
+      alert('O relatório médico deve ter pelo menos 20 caracteres.');
+      relatorioMedico.focus();
+      return false;
+    }
+
+    return confirm('Tem certeza que deseja finalizar este atendimento? Esta ação não pode ser desfeita.');
+  });
+});
+</script>

@@ -168,7 +168,7 @@
             <% end %>
             
             <% if can_edit_consulta?(consulta) %>
-              <%= link_to '#', class: 'btn btn-outline btn-sm' do %>
+              <%= link_to edit_consulta_path(consulta), class: 'btn btn-outline btn-sm' do %>
                 <i class="fas fa-edit"></i> Editar
               <% end %>
             <% end %>

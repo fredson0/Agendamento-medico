@@ -203,24 +203,115 @@
     </div>
   <% end %>
 
+  <!-- Histórico Médico (se consulta foi realizada) -->
+  <% if @consulta.foi_realizada? && @consulta.tem_historico_completo? %>
+    <div class="detail-card historico-medical">
+      <div class="card-header">
+        <i class="fas fa-clipboard-list"></i>
+        <h3>Histórico do Atendimento</h3>
+        <small class="text-muted">Realizada em <%= @consulta.data_realizacao.strftime('%d/%m/%Y às %H:%M') %></small>
+      </div>
+      <div class="card-content">
+        <% if @consulta.relatorio_medico.present? %>
+          <div class="historico-section">
+            <strong class="historico-title">Relatório Médico:</strong>
+            <p class="historico-content"><%= simple_format(@consulta.relatorio_medico) %></p>
+          </div>
+        <% end %>
+
+        <% if @consulta.receitas_medicamentos.present? %>
+          <div class="historico-section">
+            <strong class="historico-title">Receitas/Medicamentos:</strong>
+            <p class="historico-content"><%= simple_format(@consulta.receitas_medicamentos) %></p>
+          </div>
+        <% end %>
+
+        <% if @consulta.exames_solicitados.present? %>
+          <div class="historico-section">
+            <strong class="historico-title">Exames Solicitados:</strong>
+            <p class="historico-content"><%= simple_format(@consulta.exames_solicitados) %></p>
+          </div>
+        <% end %>
+
+        <% if @consulta.atestado_medico.present? %>
+          <div class="historico-section">
+            <strong class="historico-title">Atestado Médico:</strong>
+            <p class="historico-content"><%= simple_format(@consulta.atestado_medico) %></p>
+          </div>
+        <% end %>
+
+        <% if @consulta.proxima_consulta.present? %>
+          <div class="historico-section">
+            <strong class="historico-title">Próxima Consulta Sugerida:</strong>
+            <p class="historico-content"><%= @consulta.proxima_consulta.strftime('%d/%m/%Y') %></p>
+          </div>
+        <% end %>
+
+        <% if @consulta.valor_pago.present? && @consulta.valor_pago > 0 %>
+          <div class="historico-section">
+            <strong class="historico-title">Valor Pago:</strong>
+            <p class="historico-content">R$ <%= number_with_precision(@consulta.valor_pago, precision: 2, delimiter: '.', separator: ',') %></p>
+          </div>
+        <% end %>
+
+        <!-- Comprovante de Atendimento -->
+        <% if @consulta.comprovante_atendimento.present? %>
+          <div class="comprovante-section">
+            <h5><i class="fas fa-certificate"></i> Comprovante de Atendimento</h5>
+            <div class="comprovante-content">
+              <%= simple_format(@consulta.comprovante_atendimento) %>
+            </div>
+            <button class="btn btn-outline-primary btn-sm" onclick="imprimirComprovante()">
+              <i class="fas fa-print"></i> Imprimir Comprovante
+            </button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <!-- Ações -->
   <div class="detail-actions">
+    <!-- Editar Consulta -->
     <% if can_edit_consulta?(@consulta) %>
-      <%= link_to '#', class: 'btn btn-primary' do %>
+      <%= link_to edit_consulta_path(@consulta), class: 'btn btn-primary' do %>
         <i class="fas fa-edit"></i> Editar Consulta
       <% end %>
     <% end %>
     
-    <% if current_usuario.papel.in?(['admin', 'atendente']) && @consulta.status.in?(['marcada', 'confirmada']) %>
-      <%= link_to '#', class: 'btn btn-success' do %>
-        <i class="fas fa-play"></i> Iniciar Atendimento
+    <!-- Realizar Atendimento (apenas médico responsável) -->
+    <% if current_usuario.papel == 'medico' && @consulta.medico.usuario == current_usuario && @consulta.pode_ser_realizada? %>
+      <%= link_to realizar_atendimento_consulta_path(@consulta), class: 'btn btn-success' do %>
+        <i class="fas fa-stethoscope"></i> Realizar Atendimento
       <% end %>
     <% end %>
     
+    <!-- Iniciar Atendimento (admin/atendente) -->
+    <% if current_usuario.papel.in?(['admin', 'atendente']) && @consulta.status == 'confirmada' %>
+      <%= link_to atualizar_status_consulta_path(@consulta), method: :patch, 
+                  params: { consulta: { status: 'em_atendimento' } },
+                  class: 'btn btn-info',
+                  data: { confirm: 'Iniciar atendimento desta consulta?' } do %>
+        <i class="fas fa-play"></i> Iniciar Atendimento
+      <% end %>
+    <% end %>
+
+    <!-- Cancelar Consulta -->
     <% if current_usuario.papel.in?(['admin', 'atendente']) && @consulta.status.in?(['marcada', 'confirmada']) %>
-      <%= link_to '#', class: 'btn btn-danger', 
+      <%= link_to atualizar_status_consulta_path(@consulta), method: :patch,
+                  params: { consulta: { status: 'cancelada' } },
+                  class: 'btn btn-warning',
                   data: { confirm: 'Tem certeza que deseja cancelar esta consulta?' } do %>
         <i class="fas fa-times"></i> Cancelar
+      <% end %>
+    <% end %>
+    
+    <!-- Deletar Consulta -->
+    <% if can_delete_consulta?(@consulta) && @consulta.pode_ser_deletada? %>
+      <%= link_to consulta_path(@consulta), method: :delete,
+                  class: 'btn btn-danger',
+                  data: { confirm: 'ATENÇÃO: Esta ação irá deletar permanentemente a consulta. Tem certeza?' } do %>
+        <i class="fas fa-trash"></i> Deletar Consulta
       <% end %>
     <% end %>
   </div>
@@ -413,4 +504,123 @@
     flex-direction: column;
   }
 }
+
+/* Estilos para Histórico Médico */
+.historico-medical {
+  border-left: 4px solid #28a745;
+}
+
+.historico-medical .card-header {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.historico-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.historico-section:last-of-type {
+  border-bottom: none;
+}
+
+.historico-title {
+  color: #495057;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.historico-content {
+  color: #6c757d;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.comprovante-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e9ecef;
+}
+
+.comprovante-section h5 {
+  color: #007bff;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.comprovante-content {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  font-family: monospace;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: pre-line;
+  border: 1px solid #dee2e6;
+  margin-bottom: 1rem;
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #17a2b8, #138496);
+  border: none;
+}
+
+.btn-info:hover {
+  background: linear-gradient(135deg, #138496, #117a8b);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+  border: none;
+  color: #212529;
+}
+
+.btn-warning:hover {
+  background: linear-gradient(135deg, #e0a800, #d39e00);
+  color: #212529;
+}
 </style>
+
+<script>
+function imprimirComprovante() {
+  const comprovanteContent = document.querySelector('.comprovante-content');
+  if (!comprovanteContent) return;
+  
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Comprovante de Atendimento Médico</title>
+        <style>
+          body { 
+            font-family: 'Courier New', monospace; 
+            font-size: 12px; 
+            line-height: 1.4;
+            margin: 20px;
+          }
+          .comprovante { 
+            max-width: 600px; 
+            margin: 0 auto;
+            white-space: pre-line;
+          }
+          @media print {
+            body { margin: 0; }
+            .comprovante { margin: 10px; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="comprovante">${comprovanteContent.innerText}</div>
+        <script>
+          window.onload = function() {
+            window.print();
+            window.close();
+          }
+        </script>
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+}
+</script>

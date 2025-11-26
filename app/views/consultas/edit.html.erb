@@ -1,0 +1,351 @@
+<% content_for :page_title, 'Editar Consulta' %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="page-header">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-edit me-3" style="font-size: 2rem; color: #007bff;"></i>
+          <div>
+            <h1 class="mb-0">Editar Consulta</h1>
+            <p class="text-muted mb-0">Modifique os dados da consulta ou altere o status</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Informações Atuais -->
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-info-circle me-2"></i>
+            Informações Atuais
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="info-item">
+            <span class="info-label">Paciente:</span>
+            <span class="info-value"><%= @consulta.paciente.nome %></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Médico:</span>
+            <span class="info-value"><%= @consulta.medico.nome %></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Status Atual:</span>
+            <span class="info-value">
+              <%= status_badge(@consulta.status) %>
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Data/Hora:</span>
+            <span class="info-value"><%= @consulta.inicio.strftime('%d/%m/%Y às %H:%M') %></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Especialidade:</span>
+            <span class="info-value"><%= @consulta.especialidade&.nome || 'Clínica Geral' %></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ações Rápidas -->
+      <div class="card mt-3">
+        <div class="card-header">
+          <h6 class="card-title mb-0">
+            <i class="fas fa-lightning-bolt me-2"></i>
+            Ações Rápidas
+          </h6>
+        </div>
+        <div class="card-body">
+          <!-- Realizar Atendimento -->
+          <% if current_usuario.papel == 'medico' && @consulta.medico.usuario == current_usuario && @consulta.pode_ser_realizada? %>
+            <%= link_to realizar_atendimento_consulta_path(@consulta), 
+                        class: 'btn btn-success w-100 mb-2' do %>
+              <i class="fas fa-stethoscope me-2"></i>
+              Realizar Atendimento
+            <% end %>
+          <% end %>
+
+          <!-- Atualizar Status -->
+          <% if can_update_status?(@consulta) %>
+            <div class="status-actions">
+              <label class="form-label fw-bold">Alterar Status:</label>
+              
+              <% if @consulta.status == 'marcada' %>
+                <%= button_to 'Confirmar', atualizar_status_consulta_path(@consulta), 
+                              params: { consulta: { status: 'confirmada' } },
+                              method: :patch, class: 'btn btn-info btn-sm w-100 mb-1',
+                              data: { confirm: 'Confirmar esta consulta?' } %>
+              <% end %>
+
+              <% if @consulta.status == 'confirmada' %>
+                <%= button_to 'Iniciar Atendimento', atualizar_status_consulta_path(@consulta),
+                              params: { consulta: { status: 'em_atendimento' } },
+                              method: :patch, class: 'btn btn-primary btn-sm w-100 mb-1',
+                              data: { confirm: 'Iniciar atendimento?' } %>
+              <% end %>
+
+              <% if @consulta.status.in?(['marcada', 'confirmada']) %>
+                <%= button_to 'Cancelar', atualizar_status_consulta_path(@consulta),
+                              params: { consulta: { status: 'cancelada' } },
+                              method: :patch, class: 'btn btn-warning btn-sm w-100 mb-1',
+                              data: { confirm: 'Cancelar esta consulta?' } %>
+              <% end %>
+
+              <% if @consulta.status.in?(['confirmada', 'em_atendimento']) %>
+                <%= button_to 'Marcar Não Compareceu', atualizar_status_consulta_path(@consulta),
+                              params: { consulta: { status: 'no_show' } },
+                              method: :patch, class: 'btn btn-secondary btn-sm w-100 mb-1',
+                              data: { confirm: 'Marcar como não compareceu?' } %>
+              <% end %>
+            </div>
+          <% end %>
+
+          <!-- Deletar Consulta -->
+          <% if can_delete_consulta?(@consulta) && @consulta.pode_ser_deletada? %>
+            <hr>
+            <%= button_to consulta_path(@consulta), method: :delete,
+                          class: 'btn btn-danger btn-sm w-100',
+                          data: { confirm: 'ATENÇÃO: Esta ação irá deletar permanentemente a consulta. Tem certeza?' } do %>
+              <i class="fas fa-trash me-2"></i>
+              Deletar Consulta
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulário de Edição -->
+    <div class="col-lg-8">
+      <%= form_with model: @consulta, local: true, class: 'edit-consulta-form' do |form| %>
+        <% if @consulta.errors.any? %>
+          <div class="alert alert-danger">
+            <h6>Erros encontrados:</h6>
+            <ul class="mb-0">
+              <% @consulta.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <!-- Dados Básicos -->
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-calendar me-2"></i>
+              Dados da Consulta
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <%= form.label :inicio, 'Data/Hora de Início *', class: 'form-label' %>
+                <%= form.datetime_local_field :inicio, class: 'form-control', required: true %>
+              </div>
+              <div class="col-md-6">
+                <%= form.label :fim, 'Data/Hora de Fim *', class: 'form-label' %>
+                <%= form.datetime_local_field :fim, class: 'form-control', required: true %>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <%= form.label :tipo, 'Tipo de Consulta *', class: 'form-label' %>
+                <%= form.select :tipo, 
+                      options_for_select([
+                        ['Presencial', 'presencial'],
+                        ['Teleconsulta', 'teleconsulta']
+                      ], @consulta.tipo), 
+                      { prompt: 'Selecione o tipo' }, 
+                      { class: 'form-select', required: true } %>
+              </div>
+              <div class="col-md-6">
+                <%= form.label :status, 'Status *', class: 'form-label' %>
+                <%= form.select :status, 
+                      options_for_select([
+                        ['Marcada', 'marcada'],
+                        ['Confirmada', 'confirmada'],
+                        ['Em Atendimento', 'em_atendimento'],
+                        ['Realizada', 'realizada'],
+                        ['Concluída', 'concluida'],
+                        ['Cancelada', 'cancelada'],
+                        ['Não Compareceu', 'no_show']
+                      ], @consulta.status), 
+                      { prompt: 'Selecione o status' }, 
+                      { class: 'form-select', required: true } %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Local e Profissionais -->
+        <div class="card mt-3">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-hospital me-2"></i>
+              Local e Profissionais
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <%= form.label :paciente_id, 'Paciente *', class: 'form-label' %>
+                <%= form.select :paciente_id, 
+                      options_from_collection_for_select(@pacientes, :id, :nome, @consulta.paciente_id),
+                      { prompt: 'Selecione o paciente' },
+                      { class: 'form-select', required: true } %>
+              </div>
+              <div class="col-md-6">
+                <%= form.label :medico_id, 'Médico *', class: 'form-label' %>
+                <%= form.select :medico_id, 
+                      options_from_collection_for_select(@medicos, :id, :nome, @consulta.medico_id),
+                      { prompt: 'Selecione o médico' },
+                      { class: 'form-select', required: true } %>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-4">
+                <%= form.label :unidade_id, 'Unidade *', class: 'form-label' %>
+                <%= form.select :unidade_id, 
+                      options_from_collection_for_select(@unidades, :id, :nome, @consulta.unidade_id),
+                      { prompt: 'Selecione a unidade' },
+                      { class: 'form-select', required: true } %>
+              </div>
+              <div class="col-md-4">
+                <%= form.label :sala_id, 'Sala', class: 'form-label' %>
+                <%= form.select :sala_id, 
+                      options_from_collection_for_select(@salas, :id, :nome, @consulta.sala_id),
+                      { prompt: 'Selecione a sala' },
+                      { class: 'form-select' } %>
+              </div>
+              <div class="col-md-4">
+                <%= form.label :especialidade_id, 'Especialidade', class: 'form-label' %>
+                <%= form.select :especialidade_id, 
+                      options_from_collection_for_select(@especialidades, :id, :nome, @consulta.especialidade_id),
+                      { prompt: 'Selecione a especialidade' },
+                      { class: 'form-select' } %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Observações -->
+        <div class="card mt-3">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-notes-medical me-2"></i>
+              Observações
+            </h5>
+          </div>
+          <div class="card-body">
+            <%= form.label :observacoes, 'Observações da Consulta', class: 'form-label' %>
+            <%= form.text_area :observacoes, class: 'form-control', rows: 4,
+                  placeholder: 'Digite observações sobre a consulta, sintomas relatados, etc...' %>
+          </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="card mt-3">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <%= link_to @consulta, class: 'btn btn-outline-secondary' do %>
+                <i class="fas fa-arrow-left me-2"></i>
+                Cancelar
+              <% end %>
+              
+              <%= form.submit 'Salvar Alterações', class: 'btn btn-primary' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<style>
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.info-value {
+  font-weight: 500;
+  color: #333;
+}
+
+.page-header {
+  padding: 2rem 0;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 2rem;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.status-actions .btn {
+  margin-bottom: 0.25rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Auto-ajustar fim baseado no início
+  const inicioInput = document.getElementById('consulta_inicio');
+  const fimInput = document.getElementById('consulta_fim');
+  
+  if (inicioInput && fimInput) {
+    inicioInput.addEventListener('change', function() {
+      if (this.value && !fimInput.value) {
+        const inicio = new Date(this.value);
+        const fim = new Date(inicio.getTime() + 30 * 60000); // +30 minutos
+        fimInput.value = fim.toISOString().slice(0, 16);
+      }
+    });
+  }
+
+  // Validação do formulário
+  const form = document.querySelector('.edit-consulta-form');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      const inicio = new Date(inicioInput.value);
+      const fim = new Date(fimInput.value);
+      
+      if (fim <= inicio) {
+        e.preventDefault();
+        alert('A data/hora de fim deve ser posterior ao início.');
+        fimInput.focus();
+        return false;
+      }
+    });
+  }
+});
+</script>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_02_150000) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_26_134707) do
   create_table "agendas", force: :cascade do |t|
     t.integer "medico_id", null: false
     t.integer "unidade_id", null: false
@@ -65,6 +65,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_02_150000) do
     t.text "observacoes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "relatorio_medico"
+    t.datetime "data_realizacao"
+    t.text "receitas_medicamentos"
+    t.text "exames_solicitados"
+    t.date "proxima_consulta"
+    t.text "atestado_medico"
+    t.decimal "valor_pago"
+    t.text "comprovante_atendimento"
     t.index ["especialidade_id"], name: "index_consultas_on_especialidade_id"
     t.index ["inicio"], name: "index_consultas_on_inicio"
     t.index ["medico_id"], name: "index_consultas_on_medico_id"

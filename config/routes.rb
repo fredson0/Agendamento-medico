@@ -42,5 +42,14 @@ Rails.application.routes.draw do
   get '/auth/test/:username/:password', to: 'auth#test_login' if Rails.env.development?
 
   # Consultas
-  resources :consultas, only: [:index, :show, :new, :create]
+  resources :consultas do
+    member do
+      patch :atualizar_status
+      get :realizar_atendimento
+      patch :finalizar_atendimento
+    end
+  end
+  
+  # Histórico de consultas
+  get '/historico', to: 'consultas#historico', as: :historico_consultas
 end
